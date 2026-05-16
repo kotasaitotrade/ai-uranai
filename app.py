@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 from datetime import date
-import math as _math
+import math
 from logic import (
     calc_compatibility, get_zodiac, get_daily_fortune,
     get_numerology_full, get_kyusei_fortune, get_animal_fortune,
