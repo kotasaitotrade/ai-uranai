@@ -1,3 +1,14 @@
+---
+title: 占いポータル
+emoji: 🔮
+colorFrom: purple
+colorTo: indigo
+sdk: streamlit
+sdk_version: 1.45.1
+app_file: app.py
+pinned: false
+---
+
 # 🔮 占いポータル
 
 APIなしのローカルロジックで動く12種の占いポータルアプリです。
@@ -18,30 +29,3 @@ APIなしのローカルロジックで動く12種の占いポータルアプリ
 | 🩸 | 血液型 | 性格診断 + 2人の相性スコア |
 | 🃏 | タロット | 大アルカナ22枚・1/3/5枚スプレッド |
 | ☯ | 易経 | 六十四卦 + 六爻 + 変爻 |
-
-## 技術スタック
-
-- **Python 3.9+**
-- **Streamlit** — UI フレームワーク
-- **Plotly** — レーダーチャート・折れ線グラフ・ホロスコープ円形チャート
-
-## セットアップ
-
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-ブラウザで `http://localhost:8501` が開きます。
-
-## 特徴
-
-- **完全無料** — Claude API / OpenAI API などの外部APIは一切不使用
-- **オフライン動作** — インターネット接続不要
-- **占いロジック自前実装** — 西洋占星術・数秘術・九星気学・四柱推命・バイオリズムなどを数学的に計算
-
-## Streamlit Cloud へのデプロイ
-
-1. このリポジトリを fork
-2. [Streamlit Cloud](https://streamlit.io/cloud) にログイン
-3. "New app" → このリポジトリを選択 → `app.py` を指定してデプロイ
