@@ -623,15 +623,40 @@ def _calc_aspect(lon1: float, lon2: float):
             return angle, abs(diff - angle)
     return None
 
-def _asc_degree(birth_date: date, birth_hour: int = 12) -> float:
-    # 簡易アセンダント：LST近似
-    jd = _julian_day(birth_date)
-    lst = (100.4606184 + 36000.77004 * (jd - 2451545.0) / 36525.0 + birth_hour * 15) % 360
-    return lst
+CITY_COORDS = {
+    "東京":     (35.69, 139.69),
+    "大阪":     (34.69, 135.50),
+    "名古屋":   (35.18, 136.91),
+    "札幌":     (43.06, 141.35),
+    "福岡":     (33.59, 130.40),
+    "仙台":     (38.27, 140.87),
+    "広島":     (34.40, 132.46),
+    "京都":     (35.01, 135.77),
+    "神戸":     (34.69, 135.20),
+    "那覇":     (26.21, 127.68),
+    "金沢":     (36.56, 136.66),
+    "新潟":     (37.91, 139.04),
+    "熊本":     (32.80, 130.70),
+    "鹿児島":   (31.60, 130.56),
+    "松山":     (33.84, 132.77),
+}
 
-def get_horoscope(birth_date: date, birth_hour: int = 12) -> dict:
+def _asc_degree(birth_date: date, birth_hour: int = 12, latitude: float = 35.69) -> float:
+    # アセンダント計算：RAMC＋緯度補正
+    jd = _julian_day(birth_date)
+    ramc = (100.4606184 + 36000.77004 * (jd - 2451545.0) / 36525.0 + birth_hour * 15) % 360
+    lat_r = math.radians(latitude)
+    # 黄道傾斜角（J2000.0基準）
+    eps = math.radians(23.4393 - 0.0000004 * (jd - 2451545.0))
+    ramc_r = math.radians(ramc)
+    # アセンダント経度（Placidus近似）
+    asc = math.degrees(math.atan2(math.cos(ramc_r), -(math.sin(ramc_r) * math.cos(eps) + math.tan(lat_r) * math.sin(eps)))) % 360
+    return asc
+
+def get_horoscope(birth_date: date, birth_hour: int = 12, birth_city: str = "東京") -> dict:
     lons = _planet_longitude(birth_date)
-    asc_lon = _asc_degree(birth_date, birth_hour)
+    lat, _ = CITY_COORDS.get(birth_city, (35.69, 139.69))
+    asc_lon = _asc_degree(birth_date, birth_hour, lat)
 
     planets = {}
     for planet, lon in lons.items():

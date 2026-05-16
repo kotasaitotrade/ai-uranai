@@ -10,6 +10,7 @@ from logic import (
     get_blood_fortune, draw_tarot, draw_hexagram,
     ZODIAC_KEYWORD, ZODIAC_RULING, ZODIAC_ELEMENT, JUNISHI_ANIMAL,
     PLANET_MEANING, HOUSE_MEANING, BLOOD_PERSONALITY, SPREAD_TYPES, SPREAD_POSITIONS,
+    CITY_COORDS,
 )
 
 st.set_page_config(page_title="占いポータル", page_icon="🔮", layout="centered")
@@ -326,9 +327,10 @@ with tabs[6]:
     h_birth = st.date_input("生年月日", key="h_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,4,5))
     h_hour = st.slider("出生時刻（不明な場合は12時のまま）", 0, 23, 12, key="h_hour",
                        format="%d時")
+    h_city = st.selectbox("出生地（都市）", list(CITY_COORDS.keys()), key="h_city")
 
     if st.button("🌌 ホロスコープを読み解く", key="btn_horo"):
-        r = get_horoscope(h_birth, h_hour)
+        r = get_horoscope(h_birth, h_hour, h_city)
 
         # サマリー
         st.markdown(f"""<div class="score-box">

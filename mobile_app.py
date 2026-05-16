@@ -10,6 +10,7 @@ from logic import (
     get_blood_fortune, draw_tarot, draw_hexagram,
     ZODIAC_KEYWORD, ZODIAC_RULING, ZODIAC_ELEMENT, JUNISHI_ANIMAL,
     PLANET_MEANING, BLOOD_PERSONALITY, SPREAD_TYPES, SPREAD_POSITIONS,
+    CITY_COORDS,
 )
 
 MOBILE_CSS = """
@@ -294,8 +295,9 @@ def _horoscope():
     st.markdown("<div class='section-header'>🌌 ホロスコープ</div>", unsafe_allow_html=True)
     birth = st.date_input("生年月日", key="m_hb", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,4,5))
     hour = st.slider("出生時刻", 0, 23, 12, key="m_hh", format="%d時")
+    city = st.selectbox("出生地（都市）", list(CITY_COORDS.keys()), key="m_hcity")
     if st.button("🌌 読み解く", key="m_btn_h"):
-        r = get_horoscope(birth, hour)
+        r = get_horoscope(birth, hour, city)
         st.markdown(f"""<div class='score-box'>
             <div style='font-size:16px;color:#f0c040;'>☉ {r['sun_sign']}　☽ {r['moon_sign']}　↑ {r['ascendant']['sign']}</div>
             <div style='color:#a090c0;margin-top:6px;font-size:13px;'>支配：{r['dominant_element']}　{r['dominant_sign']}</div>
