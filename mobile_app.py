@@ -69,14 +69,16 @@ def render_mobile():
                        layout="centered", initial_sidebar_state="collapsed")
     st.markdown(MOBILE_CSS, unsafe_allow_html=True)
 
-    # ホームメニュー or 占い画面
-    if "mobile_page" not in st.session_state:
-        st.session_state.mobile_page = "home"
-
-    if st.session_state.mobile_page == "home":
+    page = st.query_params.get("page", "home")
+    if page == "home":
         _home()
     else:
-        _fortune_page(st.session_state.mobile_page)
+        _fortune_page(page)
+
+def _go(page: str):
+    params = dict(st.query_params)
+    params["page"] = page
+    st.query_params.update(params)
 
 def _home():
     st.markdown("# 🔮 占いポータル")
@@ -106,12 +108,12 @@ def _home():
                 with col:
                     if st.button(f"{icon}\n{label}", key=f"menu_{key}",
                                  use_container_width=True):
-                        st.session_state.mobile_page = key
+                        _go(key)
                         st.rerun()
 
 def _back_btn():
     if st.button("← 戻る", key="back_btn"):
-        st.session_state.mobile_page = "home"
+        _go("home")
         st.rerun()
 
 def _fortune_page(page: str):
