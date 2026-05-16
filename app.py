@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import plotly.graph_objects as go
 from datetime import date
 import math
@@ -12,6 +13,30 @@ from logic import (
 )
 
 st.set_page_config(page_title="占いポータル", page_icon="🔮", layout="centered")
+
+# Mobile UA detection: inject JS to set ?mobile=1 query param on smartphones
+components.html("""
+<script>
+(function() {
+    var ua = navigator.userAgent;
+    var isMobile = /iPhone|Android|iPad|Mobile/i.test(ua) && !/iPad/.test(ua) || /Android.*Mobile/.test(ua);
+    var params = new URLSearchParams(window.location.search);
+    if (isMobile && params.get('mobile') !== '1') {
+        params.set('mobile', '1');
+        window.location.replace(window.location.pathname + '?' + params.toString());
+    } else if (!isMobile && params.get('mobile') === '1') {
+        params.delete('mobile');
+        var newSearch = params.toString();
+        window.location.replace(window.location.pathname + (newSearch ? '?' + newSearch : ''));
+    }
+})();
+</script>
+""", height=0)
+
+if st.query_params.get("mobile") == "1":
+    from mobile_app import render_mobile
+    render_mobile()
+    st.stop()
 
 st.markdown("""
 <style>
