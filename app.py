@@ -3,6 +3,7 @@ import streamlit.components.v1 as components
 import plotly.graph_objects as go
 from datetime import date
 import math
+from counter import increment, render_ranking
 from logic import (
     calc_compatibility, get_zodiac, get_daily_fortune,
     get_numerology_full, get_kyusei_fortune, get_animal_fortune,
@@ -94,6 +95,7 @@ tabs = st.tabs([
     "💫 相性占い", "⭐ 星座占い", "🔢 数秘術", "☯️ 九星気学",
     "🐾 動物占い", "✍️ 姓名判断", "🌌 ホロスコープ",
     "🀄 四柱推命", "📈 バイオリズム", "🩸 血液型", "🃏 タロット", "☯ 易経",
+    "🏆 ランキング",
 ])
 
 # ===================== 相性占い =====================
@@ -111,6 +113,7 @@ with tabs[0]:
         birth2 = st.date_input("生年月日", key="c_birth2", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,6,15))
 
     if st.button("💫 占う", key="btn_compat"):
+        increment("compat")
         n1 = name1 or "あなた"
         n2 = name2 or "相手"
         r = calc_compatibility(n1, birth1, n2, birth2)
@@ -168,6 +171,7 @@ with tabs[1]:
     st.markdown("### ⭐ 星座占い（今日の運勢）")
     birth_z = st.date_input("生年月日", key="z_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,4,1))
     if st.button("⭐ 占う", key="btn_zodiac"):
+        increment("zodiac")
         today = date.today()
         zodiac = get_zodiac(birth_z)
         r = get_daily_fortune(zodiac, today)
@@ -205,6 +209,7 @@ with tabs[2]:
     st.markdown("### 🔢 数秘術")
     birth_n = st.date_input("生年月日", key="n_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("🔢 占う", key="btn_num"):
+        increment("numerology")
         r = get_numerology_full(birth_n)
         st.markdown(f"## ライフパスナンバー：{r['life_path']}")
         st.markdown(f"""<div class="score-box">
@@ -222,6 +227,7 @@ with tabs[3]:
     st.markdown("### ☯️ 九星気学")
     birth_k = st.date_input("生年月日", key="k_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("☯️ 占う", key="btn_kyusei"):
+        increment("kyusei")
         today = date.today()
         r = get_kyusei_fortune(birth_k, today)
         st.markdown(f"## 本命星：{r['star_name']}")
@@ -256,6 +262,7 @@ with tabs[4]:
     st.markdown("### 🐾 動物占い")
     birth_a = st.date_input("生年月日", key="a_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("🐾 占う", key="btn_animal"):
+        increment("animal")
         r = get_animal_fortune(birth_a)
         st.markdown(f"## あなたの動物タイプ")
         st.markdown(f"""<div class="score-box">
@@ -290,6 +297,7 @@ with tabs[5]:
     st.caption("※ 画数は漢字辞典の旧字体画数を使用してください")
 
     if st.button("✍️ 占う", key="btn_seimei"):
+        increment("seimei")
         r = get_seimei_fortune(int(surname_strokes), int(given_strokes))
         full_name = f"{surname} {given}" if surname and given else "入力された名前"
         st.markdown(f"## {full_name} の姓名判断")
@@ -330,6 +338,7 @@ with tabs[6]:
     h_city = st.selectbox("出生地（都市）", list(CITY_COORDS.keys()), key="h_city")
 
     if st.button("🌌 ホロスコープを読み解く", key="btn_horo"):
+        increment("horoscope")
         r = get_horoscope(h_birth, h_hour, h_city)
 
         # サマリー
@@ -439,6 +448,7 @@ with tabs[7]:
     st.markdown("<p style='color:#a090c0;'>生年月日から年柱・月柱・日柱と五行バランスを読み解きます</p>", unsafe_allow_html=True)
     sh_birth = st.date_input("生年月日", key="sh_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("🀄 占う", key="btn_shichuu"):
+        increment("shichuu")
         r = get_shichuu(sh_birth)
         st.markdown(f"""<div class="score-box">
             <div style="font-size:24px;color:#f0c040;">本命五行：{r['honmei_gogyo']}（{r['honmei_inyo']}）</div>
@@ -479,6 +489,7 @@ with tabs[8]:
     bio_birth = st.date_input("生年月日", key="bio_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     bio_target = st.date_input("調べたい日付", key="bio_target", value=date.today())
     if st.button("📈 バイオリズムを見る", key="btn_bio"):
+        increment("biorhythm")
         r = get_biorhythm(bio_birth, bio_target)
         st.markdown(f"#### {bio_target.strftime('%Y年%m月%d日')} のバイオリズム")
 
@@ -526,6 +537,7 @@ with tabs[9]:
     if use_partner:
         bl_partner = st.selectbox("相手の血液型", ["A", "B", "O", "AB"], key="bl_partner")
     if st.button("🩸 占う", key="btn_blood"):
+        increment("blood")
         r = get_blood_fortune(bl_blood, bl_partner)
         st.markdown(f"## {bl_blood}型：{r['title']}")
         st.markdown(f"""<div class="advice-box">
@@ -552,6 +564,7 @@ with tabs[10]:
     spread_name = st.selectbox("スプレッド（展開法）", list(SPREAD_TYPES.keys()), key="tarot_spread")
     num_cards = SPREAD_TYPES[spread_name]
     if st.button("🃏 カードを引く", key="btn_tarot"):
+        increment("tarot")
         import time as _time
         seed_val = int(_time.time() * 1000) % 100000
         cards = draw_tarot(num_cards, seed=seed_val)
@@ -579,6 +592,7 @@ with tabs[11]:
     st.markdown("<p style='color:#a090c0;'>心を静めて問いを浮かべ、ボタンを押してください</p>", unsafe_allow_html=True)
     eki_question = st.text_input("問い（任意）", key="eki_q", placeholder="例：今の仕事を続けるべきか？")
     if st.button("☯ 卦を立てる", key="btn_eki"):
+        increment("ekikyo")
         import time as _time
         seed_val = int(_time.time() * 1000) % 100000
         hex_r = draw_hexagram(seed=seed_val)
@@ -606,3 +620,7 @@ with tabs[11]:
 
         if hex_r['changing_lines']:
             st.markdown(f"<p style='color:#f0c040;margin-top:8px;'>変爻：第{', '.join(map(str, hex_r['changing_lines']))}爻が動いています。変化の兆しを示しています。</p>", unsafe_allow_html=True)
+
+# ===================== ランキング =====================
+with tabs[12]:
+    render_ranking()

@@ -12,6 +12,7 @@ from logic import (
     PLANET_MEANING, BLOOD_PERSONALITY, SPREAD_TYPES, SPREAD_POSITIONS,
     CITY_COORDS,
 )
+from counter import increment, render_ranking
 
 MOBILE_CSS = """
 <style>
@@ -98,6 +99,7 @@ def _home():
         ("🩸", "血液型", "blood"),
         ("🃏", "タロット", "tarot"),
         ("☯", "易経", "ekikyo"),
+        ("🏆", "ランキング", "ranking"),
     ]
 
     # 3列グリッド
@@ -117,12 +119,17 @@ def _back_btn():
         _go("home")
         st.rerun()
 
+def _ranking():
+    _back_btn()
+    render_ranking()
+
 def _fortune_page(page: str):
     pages = {
         "compat": _compat, "zodiac": _zodiac, "numerology": _numerology,
         "kyusei": _kyusei, "animal": _animal, "seimei": _seimei,
         "horoscope": _horoscope, "shichuu": _shichuu, "biorhythm": _biorhythm,
         "blood": _blood, "tarot": _tarot, "ekikyo": _ekikyo,
+        "ranking": _ranking,
     }
     pages.get(page, _home)()
 
@@ -137,6 +144,7 @@ def _compat():
     name2 = st.text_input("ニックネーム", key="m_cn2", placeholder="たろう")
     birth2 = st.date_input("生年月日", key="m_cb2", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,6,15))
     if st.button("💫 占う", key="m_btn_compat"):
+        increment("compat")
         n1, n2 = name1 or "あなた", name2 or "相手"
         r = calc_compatibility(n1, birth1, n2, birth2)
         st.markdown(f"""<div class='score-box'>
@@ -176,6 +184,7 @@ def _zodiac():
     st.markdown("<div class='section-header'>⭐ 星座占い</div>", unsafe_allow_html=True)
     birth = st.date_input("生年月日", key="m_zb", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,4,1))
     if st.button("⭐ 占う", key="m_btn_z"):
+        increment("zodiac")
         today = date.today()
         zodiac = get_zodiac(birth)
         r = get_daily_fortune(zodiac, today)
@@ -205,6 +214,7 @@ def _numerology():
     st.markdown("<div class='section-header'>🔢 数秘術</div>", unsafe_allow_html=True)
     birth = st.date_input("生年月日", key="m_nb", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("🔢 占う", key="m_btn_n"):
+        increment("numerology")
         r = get_numerology_full(birth)
         st.markdown(f"""<div class='score-box'>
             <div style='color:#f0c040;font-size:26px;font-weight:bold;'>{r['life_path']} — {r['name']}</div>
@@ -221,6 +231,7 @@ def _kyusei():
     st.markdown("<div class='section-header'>☯️ 九星気学</div>", unsafe_allow_html=True)
     birth = st.date_input("生年月日", key="m_kb", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("☯️ 占う", key="m_btn_k"):
+        increment("kyusei")
         r = get_kyusei_fortune(birth, date.today())
         st.markdown(f"## 本命星：{r['star_name']}")
         st.markdown(f"""<div class='card'>五行：{r['element']}　キーワード：{r['keyword']}</div>""", unsafe_allow_html=True)
@@ -242,6 +253,7 @@ def _animal():
     st.markdown("<div class='section-header'>🐾 動物占い</div>", unsafe_allow_html=True)
     birth = st.date_input("生年月日", key="m_ab", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("🐾 占う", key="m_btn_a"):
+        increment("animal")
         r = get_animal_fortune(birth)
         st.markdown(f"""<div class='score-box'>
             <div style='font-size:32px;font-weight:bold;color:#f0c040;'>{r['animal']}</div>
@@ -265,6 +277,7 @@ def _seimei():
     given = st.text_input("名前", key="m_sg", placeholder="太郎")
     given_strokes = st.number_input("名前の総画数", key="m_sg2", min_value=1, max_value=81, value=14)
     if st.button("✍️ 占う", key="m_btn_s"):
+        increment("seimei")
         r = get_seimei_fortune(int(surname_strokes), int(given_strokes))
         luck_color = {"大吉":"#f0c040","最高運":"#ff6090","吉":"#9b6dff","小吉":"#60b0f0","努力運":"#a0a0a0"}
         overall_color = luck_color.get(r['overall'],"#a0a0a0")
@@ -297,6 +310,7 @@ def _horoscope():
     hour = st.slider("出生時刻", 0, 23, 12, key="m_hh", format="%d時")
     city = st.selectbox("出生地（都市）", list(CITY_COORDS.keys()), key="m_hcity")
     if st.button("🌌 読み解く", key="m_btn_h"):
+        increment("horoscope")
         r = get_horoscope(birth, hour, city)
         st.markdown(f"""<div class='score-box'>
             <div style='font-size:16px;color:#f0c040;'>☉ {r['sun_sign']}　☽ {r['moon_sign']}　↑ {r['ascendant']['sign']}</div>
@@ -328,6 +342,7 @@ def _shichuu():
     st.markdown("<div class='section-header'>🀄 四柱推命</div>", unsafe_allow_html=True)
     birth = st.date_input("生年月日", key="m_shb", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("🀄 占う", key="m_btn_sh"):
+        increment("shichuu")
         from logic import get_shichuu as _gs
         r = _gs(birth)
         st.markdown(f"""<div class='score-box'>
@@ -351,6 +366,7 @@ def _biorhythm():
     birth = st.date_input("生年月日", key="m_biob", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     target = st.date_input("調べたい日", key="m_biot", value=date.today())
     if st.button("📈 見る", key="m_btn_bio"):
+        increment("biorhythm")
         r = get_biorhythm(birth, target)
         for label, val, lbl, color in [
             ("💪 身体（23日）",r['physical'],r['physical_label'],r['physical_color']),
@@ -391,6 +407,7 @@ def _blood():
     if use_partner:
         partner = st.selectbox("相手の血液型", ["A","B","O","AB"], key="m_blp2")
     if st.button("🩸 占う", key="m_btn_bl"):
+        increment("blood")
         r = get_blood_fortune(blood, partner)
         st.markdown(f"## {blood}型：{r['title']}")
         st.markdown(f"""<div class='advice-box'>
@@ -417,6 +434,7 @@ def _tarot():
     st.markdown("<div class='section-header'>🃏 タロット</div>", unsafe_allow_html=True)
     spread = st.selectbox("スプレッド", list(SPREAD_TYPES.keys()), key="m_ts")
     if st.button("🃏 引く", key="m_btn_t"):
+        increment("tarot")
         import time as _t
         cards = draw_tarot(SPREAD_TYPES[spread], seed=int(_t.time()*1000)%100000)
         for card, pos in zip(cards, SPREAD_POSITIONS[SPREAD_TYPES[spread]]):
@@ -441,6 +459,7 @@ def _ekikyo():
     st.markdown("<div class='section-header'>☯ 易経</div>", unsafe_allow_html=True)
     question = st.text_input("問い（任意）", key="m_eq", placeholder="例：今の仕事を続けるべきか？")
     if st.button("☯ 卦を立てる", key="m_btn_e"):
+        increment("ekikyo")
         import time as _t
         hex_r = draw_hexagram(seed=int(_t.time()*1000)%100000)
         if question:
