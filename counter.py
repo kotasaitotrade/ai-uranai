@@ -150,13 +150,14 @@ def render_ranking():
         medal = medals[i] if i < 3 else f"**{i+1}.**"
         pct = count / total * 100
         bar_w = max(int(pct), 1)
-        color = "#f0c040" if i == 0 else "#c0c0c0" if i == 1 else "#cd7f32" if i == 2 else "#6c63ff"
+        color = "#7c3aed" if i == 0 else "#a855f7" if i == 1 else "#f43f5e" if i == 2 else "#6b7280"
+        bg = "#f3f0ff" if i < 2 else "#fff1f2" if i == 2 else "#f9fafb"
         st.markdown(f"""
-<div style='display:flex;align-items:center;gap:10px;margin:6px 0;'>
+<div style='display:flex;align-items:center;gap:10px;margin:6px 0;background:{bg};border-radius:10px;padding:10px 12px;'>
   <div style='min-width:28px;font-size:18px;text-align:center;'>{medal}</div>
-  <div style='min-width:130px;color:#c8c5e0;font-size:14px;'>{label}</div>
-  <div style='flex:1;background:#1c1c2e;border-radius:6px;height:14px;'>
-    <div style='background:{color};width:{bar_w}%;height:14px;border-radius:6px;'></div>
+  <div style='min-width:120px;color:#1e1b2e;font-size:13px;font-weight:500;'>{label}</div>
+  <div style='flex:1;background:#e5e7eb;border-radius:6px;height:8px;'>
+    <div style='background:{color};width:{bar_w}%;height:8px;border-radius:6px;'></div>
   </div>
-  <div style='min-width:55px;text-align:right;color:{color};font-size:13px;font-weight:bold;'>{count:,}回</div>
+  <div style='min-width:50px;text-align:right;color:{color};font-size:13px;font-weight:700;'>{count:,}回</div>
 </div>""", unsafe_allow_html=True)
