@@ -239,28 +239,40 @@ st.markdown("""
 .block-container { padding: 0 !important; max-width: 100% !important; }
 section[data-testid="stSidebar"] { display: none; }
 header[data-testid="stHeader"] { display: none; }
-.stButton>button {
+
+/* ナビボタンコンテナ非表示 */
+.hidden-nav-btns { display: none !important; }
+
+/* デフォルトボタン */
+.stButton > button {
     background: #6c63ff;
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 10px 32px;
+    padding: 9px 20px;
     font-size: 14px;
     font-weight: 600;
     width: 100%;
     transition: opacity 0.15s, transform 0.1s;
 }
-.stButton>button:hover { opacity: 0.88; transform: translateY(-1px); }
-.stButton>button:active { transform: translateY(0); }
-[data-testid="stBaseButton-secondary"]>button {
+.stButton > button:hover { opacity: 0.85; transform: translateY(-1px); }
+.stButton > button:active { transform: translateY(0); }
+
+/* secondaryボタン（カテゴリフィルター・サイドバー等） */
+[data-testid="stBaseButton-secondary"] > button {
     background: #1c1c2e !important;
     border: 1px solid #2a2a42 !important;
     color: #8e8ca0 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    padding: 7px 14px !important;
 }
-[data-testid="stBaseButton-secondary"]>button:hover {
+[data-testid="stBaseButton-secondary"] > button:hover {
     border-color: #6c63ff !important;
     color: #e8e6f0 !important;
+    background: rgba(108,99,255,0.1) !important;
 }
+
 .stTabs [data-baseweb="tab"] { color: #8e8ca0; font-size: 13px; }
 .stTabs [aria-selected="true"] { color: #f0c040; border-bottom-color: #f0c040; }
 [data-testid="stTextInput"] input, [data-testid="stNumberInput"] input {
@@ -394,15 +406,35 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# ナビボタンのクリック（Streamlitボタンで実装）
-nav_cols = st.columns(len(NAV_ITEMS))
-for i, (k, label) in enumerate(NAV_ITEMS):
-    with nav_cols[i]:
-        if st.button(label, key=f"nav_{k}", use_container_width=True):
-            go_page(k)
-            st.rerun()
+# ナビボタン（非表示コンテナ内に隠す）
+with st.container():
+    st.markdown('<div class="hidden-nav-btns">', unsafe_allow_html=True)
+    nav_cols = st.columns(len(NAV_ITEMS))
+    for i, (k, label) in enumerate(NAV_ITEMS):
+        with nav_cols[i]:
+            if st.button(label, key=f"nav_{k}", use_container_width=True):
+                go_page(k)
+                st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown("<hr style='border-color:#2a2a42;margin:0;'>", unsafe_allow_html=True)
+# HTMLナビのクリックをJSで対応（Streamlitはページ遷移をquery_paramsで管理）
+components.html(f"""
+<script>
+document.querySelectorAll('.nav-btn').forEach(function(btn) {{
+    btn.style.cursor = 'pointer';
+    btn.addEventListener('click', function() {{
+        var labels = {str({label: k for k, label in NAV_ITEMS})};
+        var key = labels[btn.innerText.trim()];
+        if (key) {{
+            var params = new URLSearchParams(window.location.search);
+            params.set('p', key);
+            params.delete('fortune');
+            window.location.search = params.toString();
+        }}
+    }});
+}});
+</script>
+""", height=0)
 
 # ===== ページルーティング =====
 current_page = get_page()
@@ -941,20 +973,41 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# カテゴリタブ
+# カテゴリタブ（HTMLで描画 + 隠しStreamlitボタンで状態管理）
 if "cat_filter" not in st.session_state:
     st.session_state.cat_filter = "すべて"
 
-cat_cols = st.columns(len(CAT_LABELS))
-for i, cat in enumerate(CAT_LABELS):
-    with cat_cols[i]:
-        is_active = st.session_state.cat_filter == cat
-        if st.button(cat, key=f"cat_{cat}", use_container_width=True,
-                     type="primary" if is_active else "secondary"):
-            st.session_state.cat_filter = cat
-            st.rerun()
+cat_html = "".join([
+    f'<span class="cat-chip{"active" if st.session_state.cat_filter == cat else ""}">{cat}</span>'
+    for cat in CAT_LABELS
+])
+st.markdown(f"""
+<div class="cat-chip-row">{cat_html}</div>
+<style>
+.cat-chip-row {{ display:flex; gap:8px; padding:14px 0 10px; flex-wrap:wrap; }}
+.cat-chip {{
+    padding:6px 18px; border-radius:20px; font-size:13px; font-weight:500;
+    background:#1c1c2e; border:1px solid #2a2a42; color:#8e8ca0;
+    cursor:pointer; white-space:nowrap;
+}}
+.cat-chipactive {{
+    background:#6c63ff; border-color:#6c63ff; color:white;
+}}
+</style>
+""", unsafe_allow_html=True)
 
-st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
+# 隠しボタンで実際のフィルタ変更
+with st.container():
+    st.markdown('<div style="display:none">', unsafe_allow_html=True)
+    cat_cols = st.columns(len(CAT_LABELS))
+    for i, cat in enumerate(CAT_LABELS):
+        with cat_cols[i]:
+            if st.button(cat, key=f"cat_{cat}", use_container_width=True):
+                st.session_state.cat_filter = cat
+                st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
 # フィルタリング
 filtered = FORTUNE_META if st.session_state.cat_filter == "すべて" else [
@@ -1007,7 +1060,7 @@ with main_col:
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
-                if st.button(f"占う →", key=f"go_{meta['key']}", use_container_width=True):
+                if st.button(f"占う →", key=f"go_{meta['key']}", use_container_width=True, type="secondary"):
                     go_page(current_page, meta['key'])
                     st.rerun()
 
@@ -1022,7 +1075,7 @@ with side_col:
         if m:
             medal = medals[i] if i < 3 else f"{i+1}."
             st.markdown(f"""<div class='sidebar-item'>{medal} {m['icon']} {m['title']} <span style='color:#50505e;font-size:11px;'>({cnt})</span></div>""", unsafe_allow_html=True)
-    if st.button("ランキング詳細 →", key="sidebar_ranking", use_container_width=True):
+    if st.button("ランキング詳細 →", key="sidebar_ranking", use_container_width=True, type="secondary"):
         go_page("ranking")
         st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
@@ -1031,7 +1084,7 @@ with side_col:
     st.markdown("<div class='sidebar-section'>", unsafe_allow_html=True)
     st.markdown("<div class='sidebar-title'>悩み別で探す</div>", unsafe_allow_html=True)
     for cat in CAT_LABELS[1:]:
-        if st.button(cat, key=f"side_cat_{cat}", use_container_width=True):
+        if st.button(cat, key=f"side_cat_{cat}", use_container_width=True, type="secondary"):
             st.session_state.cat_filter = cat
             st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
