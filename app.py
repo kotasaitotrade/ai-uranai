@@ -121,48 +121,47 @@ st.markdown("""
 .fortune-card {
     background: #13131f;
     border: 1px solid #2a2a42;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
-    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     cursor: pointer;
+    height: 100%;
 }
 .fortune-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
     border-color: #6c63ff;
 }
 .card-thumb {
-    background: #1c1c2e;
-    height: 100px;
+    height: 108px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 48px;
+    font-size: 52px;
     position: relative;
 }
 .card-badge {
     position: absolute;
-    top: 8px;
-    left: 8px;
-    background: #6c63ff;
+    top: 10px;
+    left: 10px;
+    background: #10b981;
     color: white;
     font-size: 10px;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 3px 9px;
     border-radius: 4px;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
 }
-.card-badge.free { background: #10b981; }
-.card-body { padding: 12px 14px 14px; }
-.card-meta { margin-bottom: 5px; }
+.card-body { padding: 14px 14px 16px; }
+.card-meta { margin-bottom: 6px; }
 .card-title {
     color: #e8e6f0;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
     line-height: 1.4;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
-.card-desc { color: #8e8ca0; font-size: 12px; line-height: 1.6; }
+.card-desc { color: #8e8ca0; font-size: 12px; line-height: 1.65; }
 
 /* 占い詳細ページ */
 .detail-header {
@@ -806,32 +805,125 @@ if current_page == "ranking":
 
 # ===== 今日の運勢ページ =====
 if current_page == "today":
-    st.markdown("""
+    ZODIAC_LIST = [
+        ("♈", "牡羊座", "3/21〜4/19"),
+        ("♉", "牡牛座", "4/20〜5/20"),
+        ("♊", "双子座", "5/21〜6/21"),
+        ("♋", "蟹座",   "6/22〜7/22"),
+        ("♌", "獅子座", "7/23〜8/22"),
+        ("♍", "乙女座", "8/23〜9/22"),
+        ("♎", "天秤座", "9/23〜10/23"),
+        ("♏", "蠍座",   "10/24〜11/21"),
+        ("♐", "射手座", "11/22〜12/21"),
+        ("♑", "山羊座", "12/22〜1/19"),
+        ("♒", "水瓶座", "1/20〜2/18"),
+        ("♓", "魚座",   "2/19〜3/20"),
+    ]
+    ZODIAC_COLORS = {
+        "牡羊座":"#e05555","牡牛座":"#5a9e5a","双子座":"#d4a020","蟹座":"#5588cc",
+        "獅子座":"#e07a20","乙女座":"#6aaa6a","天秤座":"#9966cc","蠍座":"#cc4455",
+        "射手座":"#cc7722","山羊座":"#557799","水瓶座":"#3399aa","魚座":"#7766bb",
+    }
+
+    st.markdown(f"""
     <div class="page-title-bar">
         <h1>📅 今日の運勢</h1>
-        <p>あなたの星座を選んで今日の運勢をチェック</p>
+        <p>{date.today().strftime('%Y年%m月%d日')}　あなたの星座を選んでください</p>
     </div>
     """, unsafe_allow_html=True)
-    st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
-    birth_today = st.date_input("生年月日", key="today_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,4,1))
-    if st.button("⭐ 今日の運勢を見る", key="btn_today"):
-        increment("zodiac")
-        zodiac = get_zodiac(birth_today)
-        r = get_daily_fortune(zodiac, date.today())
-        st.markdown(f"## {zodiac}　{date.today().strftime('%Y年%m月%d日')}")
-        st.markdown(f"""<div class="score-box">
-            <div style="color:#c8c5e0;">総合運</div>
-            <div class="score-num">{r['total']}点</div>
-            <div style="color:#f0c040;">🍀 {r['lucky_color']}　🔢 {r['lucky_number']}</div>
-        </div>""", unsafe_allow_html=True)
+    st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+
+    selected = st.session_state.get("today_zodiac", None)
+
+    # 星座グリッド（4列×3行）
+    if not selected:
+        st.markdown("""
+        <style>
+        div[data-testid="stColumns"] > div > div > div > button.zodiac-btn {
+            background: #13131f; border: 1px solid #2a2a42;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        rows = [ZODIAC_LIST[i:i+4] for i in range(0, 12, 4)]
+        for row in rows:
+            cols = st.columns(4)
+            for j, (sym, name, period) in enumerate(row):
+                color = ZODIAC_COLORS[name]
+                with cols[j]:
+                    st.markdown(f"""
+                    <div style="
+                        background:#13131f;border:1px solid #2a2a42;border-radius:12px;
+                        padding:16px 8px;text-align:center;margin-bottom:4px;cursor:pointer;
+                        transition:border-color 0.15s;
+                    ">
+                        <div style="font-size:32px;color:{color};">{sym}</div>
+                        <div style="font-size:14px;font-weight:700;color:#e8e6f0;margin-top:6px;">{name}</div>
+                        <div style="font-size:11px;color:#8e8ca0;margin-top:2px;">{period}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    if st.button("選ぶ", key=f"zod_{name}", use_container_width=True):
+                        st.session_state.today_zodiac = name
+                        increment("zodiac")
+                        st.rerun()
+    else:
+        # 結果表示
+        color = ZODIAC_COLORS.get(selected, "#6c63ff")
+        sym = next(s for s, n, _ in ZODIAC_LIST if n == selected)
+        r = get_daily_fortune(selected, date.today())
+
+        # 星座ヘッダー
+        stars = lambda s: "★" * (s // 20) + "☆" * (5 - s // 20)
+        total_stars = stars(r["total"])
+        st.markdown(f"""
+        <div style="background:#13131f;border:1px solid #2a2a42;border-radius:16px;padding:28px 24px;margin-bottom:20px;">
+            <div style="display:flex;align-items:center;gap:20px;">
+                <div style="font-size:64px;color:{color};">{sym}</div>
+                <div>
+                    <div style="font-size:24px;font-weight:700;color:#e8e6f0;">{selected}</div>
+                    <div style="font-size:28px;color:#f0c040;letter-spacing:3px;margin-top:4px;">{total_stars}</div>
+                    <div style="font-size:13px;color:#8e8ca0;margin-top:4px;">総合運 {r['total']}点　🍀 {r['lucky_color']}　🔢 {r['lucky_number']}</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # 4エリア運勢
+        area_cols = st.columns(4)
+        for i, (area, icon) in enumerate([("恋愛","💕"),("仕事","💼"),("金運","💰"),("健康","💪")]):
+            s = r[area]["score"]
+            c = "#6c63ff" if s >= 75 else "#f0c040" if s >= 55 else "#e06060"
+            with area_cols[i]:
+                st.markdown(f"""
+                <div style="background:#13131f;border:1px solid #2a2a42;border-radius:10px;padding:16px;text-align:center;">
+                    <div style="font-size:22px;">{icon}</div>
+                    <div style="font-size:12px;color:#8e8ca0;margin-top:4px;">{area}</div>
+                    <div style="font-size:20px;font-weight:700;color:{c};margin-top:6px;">{s}点</div>
+                    <div style="font-size:20px;color:{c};letter-spacing:2px;">{"★"*(s//20)}{"☆"*(5-s//20)}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
+
+        # アドバイス詳細
         for area, icon in [("恋愛","💕"),("仕事","💼"),("金運","💰"),("健康","💪")]:
-            s = r[area]['score']
-            c = "#6c63ff" if s>=75 else "#f0c040" if s>=55 else "#e06060"
-            st.markdown(f"""<div class="advice-box">
-                <span style="color:#c8c5e0;font-weight:700;">{icon} {area}</span>
-                <span style="float:right;color:{c};">{"★"*(s//20)+"☆"*(5-s//20)} {s}点</span>
-                <div style="clear:both;margin-top:8px;color:#8e8ca0;">{r[area]['advice']}</div>
-            </div>""", unsafe_allow_html=True)
+            s = r[area]["score"]
+            c = "#6c63ff" if s >= 75 else "#f0c040" if s >= 55 else "#e06060"
+            st.markdown(f"""
+            <div class="advice-box" style="margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="color:#e8e6f0;font-weight:700;">{icon} {area}</span>
+                    <span style="color:{c};font-size:16px;letter-spacing:2px;">{"★"*(s//20)}{"☆"*(5-s//20)} <span style="font-size:13px;">{s}点</span></span>
+                </div>
+                <div style="margin-top:8px;color:#8e8ca0;line-height:1.7;">{r[area]['advice']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+        if st.button("← 別の星座を選ぶ", key="back_zodiac"):
+            del st.session_state["today_zodiac"]
+            st.rerun()
+
     st.stop()
 
 # ===== ホーム・新着・無料占い（カードグリッド） =====
@@ -872,6 +964,21 @@ filtered = FORTUNE_META if st.session_state.cat_filter == "すべて" else [
 # メインコンテンツ + サイドバー
 main_col, side_col = st.columns([3, 1])
 
+CARD_GRADIENTS = {
+    "compat":    "linear-gradient(135deg,#1a1a3e 0%,#3a2060 100%)",
+    "zodiac":    "linear-gradient(135deg,#1a2a3e 0%,#204060 100%)",
+    "numerology":"linear-gradient(135deg,#1e2a1e 0%,#2a4a30 100%)",
+    "kyusei":    "linear-gradient(135deg,#2a1e1e 0%,#4a2a20 100%)",
+    "animal":    "linear-gradient(135deg,#1e2a1e 0%,#354a20 100%)",
+    "seimei":    "linear-gradient(135deg,#2a2a1e 0%,#4a4020 100%)",
+    "horoscope": "linear-gradient(135deg,#1a1a40 0%,#2a2060 100%)",
+    "shichuu":   "linear-gradient(135deg,#2a1a1a 0%,#4a2020 100%)",
+    "biorhythm": "linear-gradient(135deg,#1a2a2a 0%,#1a4040 100%)",
+    "blood":     "linear-gradient(135deg,#2a1a1a 0%,#501520 100%)",
+    "tarot":     "linear-gradient(135deg,#1e1a2e 0%,#3a1a50 100%)",
+    "ekikyo":    "linear-gradient(135deg,#1a2a2a 0%,#204040 100%)",
+}
+
 with main_col:
     # カードグリッド（3列）
     counts = get_counts()
@@ -882,24 +989,25 @@ with main_col:
             with cols[j]:
                 view_count = counts.get(meta['key'], 0)
                 tags_html = "".join(
-                    f'<span style="background:#1c1c2e;color:#8e8ca0;font-size:10px;padding:1px 7px;border-radius:8px;margin-right:4px;">{t}</span>'
+                    f'<span style="background:#1c1c2e;color:#8e8ca0;font-size:10px;padding:2px 8px;border-radius:4px;margin-right:4px;">{t}</span>'
                     for t in meta['tags']
                 )
+                grad = CARD_GRADIENTS.get(meta['key'], "linear-gradient(135deg,#1c1c2e,#2a2a42)")
                 st.markdown(f"""
                 <div class="fortune-card">
-                    <div class="card-thumb">
-                        <span class="card-badge free">{meta['badge']}</span>
+                    <div class="card-thumb" style="background:{grad};">
+                        <span class="card-badge">{meta['badge']}</span>
                         {meta['icon']}
                     </div>
                     <div class="card-body">
                         <div class="card-meta">{tags_html}</div>
                         <div class="card-title">{meta['title']}</div>
-                        <div class="card-desc">{meta['desc']}</div>
-                        <div style="margin-top:8px;color:#50505e;font-size:11px;">👁 {view_count:,}回</div>
+                        <div class="card-subtitle" style="color:#8e8ca0;font-size:11px;margin-bottom:6px;">{meta['subtitle']}</div>
+                        <div style="color:#50505e;font-size:11px;">👁 {view_count:,}回</div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
-                if st.button(f"この占いをする →", key=f"go_{meta['key']}", use_container_width=True):
+                if st.button(f"占う →", key=f"go_{meta['key']}", use_container_width=True):
                     go_page(current_page, meta['key'])
                     st.rerun()
 

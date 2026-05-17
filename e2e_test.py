@@ -128,7 +128,7 @@ def run_tests():
 
         # ===== 6. 相性占い詳細ページへ直接遷移 =====
         try:
-            page.goto(BASE_URL + "?fortune=compat", timeout=TIMEOUT)
+            page.goto(BASE_URL + "?p=home&fortune=compat", timeout=TIMEOUT)
             wait_for_streamlit(page, extra=2)
             url = page.url
             log("相性占い URL遷移", "fortune=compat" in url, f"url={url}")
@@ -218,25 +218,31 @@ def run_tests():
         except Exception as e:
             log("ランキングページ", False, str(e))
 
-        # ===== 13. 今日の運勢ページ =====
+        # ===== 13. 今日の運勢ページ（星座グリッド） =====
         try:
             page.goto(BASE_URL + "?p=today", timeout=TIMEOUT)
-            wait_for_streamlit(page, extra=2)
-            # ボタンテキストは "⭐ 今日の運勢を見る"
-            btns = page.locator("button", has_text="今日の運勢を見る").all()
+            wait_for_streamlit(page, extra=3)
+            # 星座ボタン（「選ぶ」ボタンが12個並ぶ）
+            btns = page.locator("button", has_text="選ぶ").all()
             visible = [b for b in btns if b.is_visible()]
-            log("今日の運勢ページ", len(visible) > 0, f"ボタン数={len(visible)}")
+            log("今日の運勢ページ（星座グリッド）", len(visible) >= 12, f"星座ボタン数={len(visible)}")
         except Exception as e:
             log("今日の運勢ページ", False, str(e))
 
-        # ===== 14. 今日の運勢 実行 =====
+        # ===== 14. 今日の運勢 星座選択→実行 =====
         try:
-            click_visible_button(page, "今日の運勢を見る")
-            wait_for_streamlit(page, extra=3)
-            result = page.locator(".score-num").first
-            result.wait_for(timeout=TIMEOUT)
-            text = result.inner_text()
-            log("今日の運勢 実行", text.endswith("点"), f"スコア={text}")
+            # 最初の星座（牡羊座）を選ぶ
+            btns = page.locator("button", has_text="選ぶ").all()
+            visible = [b for b in btns if b.is_visible()]
+            if visible:
+                visible[0].click()
+                wait_for_streamlit(page, extra=3)
+                # 4つのエリア運勢スコアが表示されるか確認
+                score_area = page.locator("text=恋愛").first
+                score_area.wait_for(timeout=TIMEOUT)
+                log("今日の運勢 実行", True)
+            else:
+                log("今日の運勢 実行", False, "星座ボタンが見つからない")
         except Exception as e:
             log("今日の運勢 実行", False, str(e))
 
