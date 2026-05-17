@@ -67,8 +67,6 @@ MOBILE_CSS = """
 """
 
 def render_mobile():
-    st.set_page_config(page_title="🔮 占いポータル", page_icon="🔮",
-                       layout="centered", initial_sidebar_state="collapsed")
     st.markdown(MOBILE_CSS, unsafe_allow_html=True)
 
     page = st.query_params.get("page", "home")
