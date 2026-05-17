@@ -32,9 +32,9 @@ def _get_drive_service():
         from google.oauth2 import service_account
         from googleapiclient.discovery import build
 
-        # HF Secrets または環境変数から認証情報を取得
         sa_info = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
         if not sa_info:
+            print("[counter] GOOGLE_SERVICE_ACCOUNT_JSON not set")
             return None
 
         sa_dict = json.loads(sa_info)
@@ -42,8 +42,11 @@ def _get_drive_service():
             sa_dict,
             scopes=["https://www.googleapis.com/auth/drive"],
         )
-        return build("drive", "v3", credentials=creds)
-    except Exception:
+        svc = build("drive", "v3", credentials=creds)
+        print("[counter] Drive service initialized OK")
+        return svc
+    except Exception as e:
+        print(f"[counter] Drive init error: {e}")
         return None
 
 
