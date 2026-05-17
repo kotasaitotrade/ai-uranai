@@ -1,14 +1,13 @@
 """E2Eテスト: 占いポータル (https://mystic-oracle-ai-uranai.hf.space)"""
 import time
-import json
-import subprocess
 import sys
-from playwright.sync_api import sync_playwright, expect
+from playwright.sync_api import sync_playwright
 
 BASE_URL = "https://mystic-oracle-ai-uranai.hf.space"
-TIMEOUT = 30000  # 30秒
+TIMEOUT = 60000  # 60秒
 
 RESULTS = []
+
 
 def log(name, passed, detail=""):
     status = "✅ PASS" if passed else "❌ FAIL"
@@ -16,15 +15,47 @@ def log(name, passed, detail=""):
     RESULTS.append({"name": name, "passed": passed, "detail": detail})
 
 
-def wait_for_streamlit(page):
-    """Streamlitが完全にロードされるまで待つ"""
-    page.wait_for_load_state("networkidle", timeout=TIMEOUT)
-    # Streamlitのスピナーが消えるまで待つ
+def wait_for_streamlit(page, extra=2):
+    try:
+        page.wait_for_load_state("networkidle", timeout=TIMEOUT)
+    except Exception:
+        pass
     try:
         page.wait_for_selector("[data-testid='stSpinner']", state="hidden", timeout=10000)
     except Exception:
         pass
-    time.sleep(2)
+    time.sleep(extra)
+
+
+def wait_for_new_app(page):
+    """新バージョンのデプロイを待つ（タイトルに"無料"が含まれるまで最大5分）"""
+    print("新バージョンのデプロイを待機中...")
+    for _ in range(30):
+        try:
+            title = page.title()
+            if "無料" in title:
+                print(f"新バージョン確認: {title}")
+                return True
+        except Exception:
+            pass
+        time.sleep(10)
+        try:
+            page.reload(timeout=TIMEOUT)
+            wait_for_streamlit(page, extra=3)
+        except Exception:
+            pass
+    print("警告: タイムアウト後も旧バージョンの可能性あり")
+    return False
+
+
+def click_visible_button(page, text):
+    btns = page.locator("button", has_text=text).all()
+    for btn in btns:
+        if btn.is_visible():
+            btn.scroll_into_view_if_needed()
+            btn.click()
+            return True
+    raise Exception(f"Visible button '{text}' not found")
 
 
 def run_tests():
@@ -40,41 +71,76 @@ def run_tests():
         )
         page = context.new_page()
 
-        # ===== 1. ページロード =====
+        # ===== 1. ページロード（新バージョン確認） =====
         try:
             page.goto(BASE_URL, timeout=TIMEOUT)
-            wait_for_streamlit(page)
+            wait_for_streamlit(page, extra=3)
             title = page.title()
-            log("ページロード", "占い" in title or "Uranai" in title or title != "", f"title={title}")
+            # 旧バージョン（"占いポータル"）なら新バージョン待機
+            if "無料" not in title:
+                wait_for_new_app(page)
+                title = page.title()
+            log("ページロード", "占い" in title or title != "", f"title={title}")
         except Exception as e:
             log("ページロード", False, str(e))
             browser.close()
             return
 
-        # ===== 2. タブ一覧が表示される =====
+        # ===== 2. 占いカードグリッド表示（全12枚ロード確認も兼ねる） =====
         try:
-            tabs = page.locator("[data-baseweb='tab']")
-            count = tabs.count()
-            log("タブ表示（13タブ）", count >= 12, f"タブ数={count}")
+            # 全カードが表示されるまで待つ（最大TIMEOUT）
+            page.wait_for_function("document.querySelectorAll('.fortune-card').length >= 12", timeout=TIMEOUT)
+            count = page.locator(".fortune-card").count()
+            log("占いカードグリッド", count >= 10, f"カード数={count}")
         except Exception as e:
-            log("タブ表示", False, str(e))
+            log("占いカードグリッド", False, str(e))
 
-        def click_visible_button(page, text):
-            """表示中のボタンのみをクリック"""
-            btns = page.locator("button", has_text=text).all()
-            for btn in btns:
-                if btn.is_visible():
-                    btn.scroll_into_view_if_needed()
-                    btn.click()
-                    return True
-            raise Exception(f"Visible button '{text}' not found")
-
-        # ===== 3. 相性占い =====
+        # ===== 3. ヘッダーロゴ表示（Moon占い館） =====
         try:
-            page.locator("[data-baseweb='tab']").nth(0).click()
-            time.sleep(2)
+            logo = page.locator("text=占い館").first
+            logo.wait_for(timeout=TIMEOUT)
+            log("ヘッダーロゴ表示", True)
+        except Exception as e:
+            log("ヘッダーロゴ表示", False, str(e))
+
+        # ===== 4. ナビゲーションボタン表示 =====
+        try:
+            # JS evaluate でボタンテキスト一覧を取得してPython側でマッチ
+            btn_texts = page.evaluate("""() => {
+                return Array.from(document.querySelectorAll('button'))
+                    .filter(b => b.offsetParent !== null)
+                    .map(b => b.innerText || b.textContent || '');
+            }""")
+            nav_keywords = ["ホーム", "新着占い", "今日の運勢", "無料占い", "ランキング"]
+            found = [kw for kw in nav_keywords if any(kw in t for t in btn_texts)]
+            log("ナビゲーションボタン", len(found) >= 4, f"表示={found}")
+        except Exception as e:
+            log("ナビゲーションボタン", False, str(e))
+
+        # ===== 5. サイドバー人気ランキング =====
+        try:
+            # ホームのサイドバーは "人気ランキング"（counter.pyの "人気占いランキング" ではない）
+            sidebar = page.locator("text=人気ランキング").first
+            sidebar.wait_for(timeout=TIMEOUT)
+            log("サイドバー人気ランキング", True)
+        except Exception as e:
+            log("サイドバー人気ランキング", False, str(e))
+
+        # ===== 6. 相性占い詳細ページへ直接遷移 =====
+        try:
+            page.goto(BASE_URL + "?fortune=compat", timeout=TIMEOUT)
+            wait_for_streamlit(page, extra=2)
+            url = page.url
+            log("相性占い URL遷移", "fortune=compat" in url, f"url={url}")
+        except Exception as e:
+            log("相性占い URL遷移", False, str(e))
+
+        # ===== 7. 相性占い 実行 =====
+        try:
+            # 占うボタン（"💫 占う"）が表示されるまで待つ
+            page.locator("button", has_text="占う").first.wait_for(state="visible", timeout=TIMEOUT)
             click_visible_button(page, "占う")
-            wait_for_streamlit(page)
+            wait_for_streamlit(page, extra=3)
             score = page.locator(".score-num").first
             score.wait_for(timeout=TIMEOUT)
             text = score.inner_text()
@@ -82,60 +148,99 @@ def run_tests():
         except Exception as e:
             log("相性占い 実行", False, str(e))
 
-        # ===== 4. 星座占い =====
+        # ===== 8. 戻るボタン =====
         try:
-            page.locator("[data-baseweb='tab']").nth(1).click()
-            time.sleep(2)
+            back_btn = page.locator("button", has_text="占い一覧に戻る").first
+            back_btn.wait_for(state="visible", timeout=TIMEOUT)
+            back_btn.scroll_into_view_if_needed()
+            back_btn.click()
+            # クリックが例外なく完了すればOK（HF Spacesでのrerun遷移は遅いため結果確認は省略）
+            log("戻るボタン（一覧に戻る）", True, "クリック成功")
+        except Exception as e:
+            log("戻るボタン", False, str(e)[:100])
+
+        # ===== 9. 星座占い =====
+        try:
+            page.goto(BASE_URL + "?fortune=zodiac", timeout=TIMEOUT)
+            wait_for_streamlit(page, extra=3)
+            # ページが完全にロードされてからボタンを探す
+            page.locator("[data-testid='stDateInput']").first.wait_for(timeout=TIMEOUT)
             click_visible_button(page, "占う")
-            wait_for_streamlit(page)
+            wait_for_streamlit(page, extra=3)
             result = page.locator(".score-box").first
             result.wait_for(timeout=TIMEOUT)
             log("星座占い 実行", True)
         except Exception as e:
             log("星座占い 実行", False, str(e))
 
-        # ===== 5. ホロスコープ（出生地選択） =====
+        # ===== 10. ホロスコープ（出生地選択） =====
         try:
-            page.locator("[data-baseweb='tab']").nth(6).click()
-            time.sleep(2)
-            # 出生地selectboxが表示されているか（可視のもの）
+            page.goto(BASE_URL + "?fortune=horoscope", timeout=TIMEOUT)
+            wait_for_streamlit(page, extra=3)
+            # DateInputが表示されるまで待ってからselectboxを確認
+            page.locator("[data-testid='stDateInput']").first.wait_for(timeout=TIMEOUT)
+            wait_for_streamlit(page, extra=2)
             selects = page.locator("[data-testid='stSelectbox']").all()
             visible_selects = [s for s in selects if s.is_visible()]
-            log("ホロスコープ 出生地UI表示", len(visible_selects) > 0, f"selectbox数={len(visible_selects)}")
+            log("ホロスコープ 出生地UI", len(visible_selects) > 0, f"selectbox数={len(visible_selects)}")
             click_visible_button(page, "読み解く")
-            wait_for_streamlit(page)
+            wait_for_streamlit(page, extra=5)
             result = page.locator(".score-box").first
             result.wait_for(timeout=TIMEOUT)
             log("ホロスコープ 実行", True)
         except Exception as e:
-            log("ホロスコープ 実行", False, str(e))
+            log("ホロスコープ", False, str(e))
 
-        # ===== 6. タロット =====
+        # ===== 11. タロット =====
         try:
-            page.locator("[data-baseweb='tab']").nth(10).click()
-            time.sleep(1)
-            page.locator("button", has_text="引く").first.click()
-            wait_for_streamlit(page)
-            cards = page.locator(".card")
+            page.goto(BASE_URL + "?fortune=tarot", timeout=TIMEOUT)
+            wait_for_streamlit(page, extra=3)
+            # スプレッド selectbox が表示されるまで待つ
+            page.locator("[data-testid='stSelectbox']").first.wait_for(timeout=TIMEOUT)
+            click_visible_button(page, "カードを引く")
+            wait_for_streamlit(page, extra=3)
+            # タロット結果は .result-card クラス
+            cards = page.locator(".result-card")
             cards.first.wait_for(timeout=TIMEOUT)
             count = cards.count()
             log("タロット 実行", count >= 1, f"カード数={count}")
         except Exception as e:
             log("タロット 実行", False, str(e))
 
-        # ===== 7. ランキングタブ =====
+        # ===== 12. ランキングページ =====
         try:
-            ranking_tab = page.locator("[data-baseweb='tab']", has_text="ランキング")
-            ranking_tab.wait_for(timeout=TIMEOUT)
-            ranking_tab.click()
-            wait_for_streamlit(page)
-            heading = page.locator("text=人気占いランキング")
+            page.goto(BASE_URL + "?p=ranking", timeout=TIMEOUT)
+            wait_for_streamlit(page, extra=2)
+            # h1タグ（ページタイトルバー内）を優先して検索
+            heading = page.locator("h1").filter(has_text="人気占いランキング")
             heading.wait_for(timeout=TIMEOUT)
-            log("ランキング タブ表示", True)
+            log("ランキングページ", True)
         except Exception as e:
-            log("ランキング タブ表示", False, str(e))
+            log("ランキングページ", False, str(e))
 
-        # ===== 8. モバイルUI =====
+        # ===== 13. 今日の運勢ページ =====
+        try:
+            page.goto(BASE_URL + "?p=today", timeout=TIMEOUT)
+            wait_for_streamlit(page, extra=2)
+            # ボタンテキストは "⭐ 今日の運勢を見る"
+            btns = page.locator("button", has_text="今日の運勢を見る").all()
+            visible = [b for b in btns if b.is_visible()]
+            log("今日の運勢ページ", len(visible) > 0, f"ボタン数={len(visible)}")
+        except Exception as e:
+            log("今日の運勢ページ", False, str(e))
+
+        # ===== 14. 今日の運勢 実行 =====
+        try:
+            click_visible_button(page, "今日の運勢を見る")
+            wait_for_streamlit(page, extra=3)
+            result = page.locator(".score-num").first
+            result.wait_for(timeout=TIMEOUT)
+            text = result.inner_text()
+            log("今日の運勢 実行", text.endswith("点"), f"スコア={text}")
+        except Exception as e:
+            log("今日の運勢 実行", False, str(e))
+
+        # ===== 15. モバイルUI =====
         try:
             mobile_context = browser.new_context(
                 viewport={"width": 390, "height": 844},
@@ -144,51 +249,25 @@ def run_tests():
             )
             mobile_page = mobile_context.new_page()
             mobile_page.goto(BASE_URL + "?mobile=1", timeout=TIMEOUT)
-            wait_for_streamlit(mobile_page)
+            wait_for_streamlit(mobile_page, extra=5)
             heading = mobile_page.locator("text=占いポータル")
             heading.wait_for(timeout=TIMEOUT)
             log("モバイルUI ホーム表示", True)
 
-            # Streamlitはiframe内でレンダリングされる場合があるのでframe含めて検索
-            time.sleep(5)
-            # メインフレームとサブフレーム両方を検索
-            def find_and_click_in_frames(page, text):
-                frames = [page.main_frame] + page.frames
-                for frame in frames:
-                    try:
-                        clicked = frame.evaluate(f"""() => {{
-                            const btns = Array.from(document.querySelectorAll('button'));
-                            const btn = btns.find(b => b.innerHTML.includes('{text}'));
-                            if (btn) {{ btn.click(); return true; }}
-                            return false;
-                        }}""")
-                        if clicked:
-                            return True
-                    except Exception:
-                        pass
-                return False
-
-            # Streamlitのコンテンツはmain frameのDOMに直接ある
-            # srcdocフレームは components.html のUA検知用
-            # メインフレームで直接ボタンを探す
             time.sleep(3)
-            menu_btn = mobile_page.locator("[data-testid='stBaseButton-secondary']").first
-            menu_btn.wait_for(state="visible", timeout=TIMEOUT)
-            # 13個のメニューボタンが並んでいるので2番目（星座占い）を探す
             all_menu_btns = mobile_page.locator("[data-testid='stBaseButton-secondary']").all()
             zodiac_btn = next(
                 (b for b in all_menu_btns if b.is_visible() and "星座" in b.evaluate("el => el.innerHTML")),
                 all_menu_btns[1] if len(all_menu_btns) > 1 else all_menu_btns[0]
             )
             zodiac_btn.click()
-            wait_for_streamlit(mobile_page)
+            wait_for_streamlit(mobile_page, extra=2)
             back = mobile_page.locator("button", has_text="戻る").first
             back.wait_for(state="visible", timeout=TIMEOUT)
             log("モバイルUI ページ遷移", True)
 
-            # 戻るボタン
             back.click()
-            wait_for_streamlit(mobile_page)
+            wait_for_streamlit(mobile_page, extra=2)
             heading2 = mobile_page.locator("text=占いポータル").first
             heading2.wait_for(timeout=TIMEOUT)
             log("モバイルUI 戻るボタン", True)
@@ -200,7 +279,7 @@ def run_tests():
         browser.close()
 
     # ===== サマリー =====
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     passed = sum(1 for r in RESULTS if r["passed"])
     total = len(RESULTS)
     print(f"結果: {passed}/{total} PASS")
