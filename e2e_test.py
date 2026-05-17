@@ -95,9 +95,9 @@ def run_tests():
         except Exception as e:
             log("占いカードグリッド", False, str(e))
 
-        # ===== 3. ヘッダーロゴ表示（Moon占い館） =====
+        # ===== 3. ヘッダーロゴ表示（天啓館） =====
         try:
-            logo = page.locator("text=占い館").first
+            logo = page.locator("text=天啓館").first
             logo.wait_for(timeout=TIMEOUT)
             log("ヘッダーロゴ表示", True)
         except Exception as e:

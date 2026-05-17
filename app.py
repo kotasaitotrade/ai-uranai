@@ -390,7 +390,7 @@ nav_html = "".join([
 ])
 st.markdown(f"""
 <div class="site-header">
-    <div class="site-logo">🔮 <span>Moon</span>占い館</div>
+    <div class="site-logo">✨ <span>天啓館</span></div>
     <div class="header-nav">{nav_html}</div>
 </div>
 """, unsafe_allow_html=True)
