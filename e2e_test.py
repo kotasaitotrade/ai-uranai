@@ -128,10 +128,10 @@ def run_tests():
 
         # ===== 6. 相性占い詳細ページへ直接遷移 =====
         try:
-            page.goto(BASE_URL + "?p=home&fortune=compat", timeout=TIMEOUT)
+            page.goto(BASE_URL + "?p=home&fortune=compatibility", timeout=TIMEOUT)
             wait_for_streamlit(page, extra=2)
             url = page.url
-            log("相性占い URL遷移", "fortune=compat" in url, f"url={url}")
+            log("相性占い URL遷移", "fortune=compatibility" in url, f"url={url}")
         except Exception as e:
             log("相性占い URL遷移", False, str(e))
 
@@ -161,7 +161,7 @@ def run_tests():
 
         # ===== 9. 星座占い =====
         try:
-            page.goto(BASE_URL + "?fortune=zodiac", timeout=TIMEOUT)
+            page.goto(BASE_URL + "?fortune=zodiac-sign", timeout=TIMEOUT)
             wait_for_streamlit(page, extra=3)
             # ページが完全にロードされてからボタンを探す
             page.locator("[data-testid='stDateInput']").first.wait_for(timeout=TIMEOUT)

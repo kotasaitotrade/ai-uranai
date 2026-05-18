@@ -85,18 +85,18 @@ def _home():
     st.markdown("<p style='color:#a090c0;text-align:center;'>占いを選んでください</p>", unsafe_allow_html=True)
 
     menus = [
-        ("💫", "相性占い", "compat"),
-        ("⭐", "星座占い", "zodiac"),
+        ("💫", "相性占い", "compatibility"),
+        ("⭐", "星座占い", "zodiac-sign"),
         ("🔢", "数秘術", "numerology"),
-        ("☯️", "九星気学", "kyusei"),
-        ("🐾", "動物占い", "animal"),
-        ("✍️", "姓名判断", "seimei"),
+        ("☯️", "九星気学", "nine-star-ki"),
+        ("🐾", "動物占い", "animal-spirit"),
+        ("✍️", "姓名判断", "name-reading"),
         ("🌌", "ホロスコープ", "horoscope"),
-        ("🀄", "四柱推命", "shichuu"),
+        ("🀄", "四柱推命", "four-pillars"),
         ("📈", "バイオリズム", "biorhythm"),
-        ("🩸", "血液型", "blood"),
+        ("🩸", "血液型", "blood-type"),
         ("🃏", "タロット", "tarot"),
-        ("☯", "易経", "ekikyo"),
+        ("☯", "易経", "i-ching"),
         ("🏆", "ランキング", "ranking"),
     ]
 
@@ -123,10 +123,10 @@ def _ranking():
 
 def _fortune_page(page: str):
     pages = {
-        "compat": _compat, "zodiac": _zodiac, "numerology": _numerology,
-        "kyusei": _kyusei, "animal": _animal, "seimei": _seimei,
-        "horoscope": _horoscope, "shichuu": _shichuu, "biorhythm": _biorhythm,
-        "blood": _blood, "tarot": _tarot, "ekikyo": _ekikyo,
+        "compatibility": _compat, "zodiac-sign": _zodiac, "numerology": _numerology,
+        "nine-star-ki": _kyusei, "animal-spirit": _animal, "name-reading": _seimei,
+        "horoscope": _horoscope, "four-pillars": _shichuu, "biorhythm": _biorhythm,
+        "blood-type": _blood, "tarot": _tarot, "i-ching": _ekikyo,
         "ranking": _ranking,
     }
     pages.get(page, _home)()
@@ -142,7 +142,7 @@ def _compat():
     name2 = st.text_input("ニックネーム", key="m_cn2", placeholder="たろう")
     birth2 = st.date_input("生年月日", key="m_cb2", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,6,15))
     if st.button("💫 占う", key="m_btn_compat"):
-        increment("compat")
+        increment("compatibility")
         n1, n2 = name1 or "あなた", name2 or "相手"
         r = calc_compatibility(n1, birth1, n2, birth2)
         st.markdown(f"""<div class='score-box'>
@@ -182,7 +182,7 @@ def _zodiac():
     st.markdown("<div class='section-header'>⭐ 星座占い</div>", unsafe_allow_html=True)
     birth = st.date_input("生年月日", key="m_zb", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,4,1))
     if st.button("⭐ 占う", key="m_btn_z"):
-        increment("zodiac")
+        increment("zodiac-sign")
         today = date.today()
         zodiac = get_zodiac(birth)
         r = get_daily_fortune(zodiac, today)
@@ -229,7 +229,7 @@ def _kyusei():
     st.markdown("<div class='section-header'>☯️ 九星気学</div>", unsafe_allow_html=True)
     birth = st.date_input("生年月日", key="m_kb", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("☯️ 占う", key="m_btn_k"):
-        increment("kyusei")
+        increment("nine-star-ki")
         r = get_kyusei_fortune(birth, date.today())
         st.markdown(f"## 本命星：{r['star_name']}")
         st.markdown(f"""<div class='card'>五行：{r['element']}　キーワード：{r['keyword']}</div>""", unsafe_allow_html=True)
@@ -251,10 +251,10 @@ def _animal():
     st.markdown("<div class='section-header'>🐾 動物占い</div>", unsafe_allow_html=True)
     birth = st.date_input("生年月日", key="m_ab", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("🐾 占う", key="m_btn_a"):
-        increment("animal")
+        increment("animal-spirit")
         r = get_animal_fortune(birth)
         st.markdown(f"""<div class='score-box'>
-            <div style='font-size:32px;font-weight:bold;color:#f0c040;'>{r['animal']}</div>
+            <div style='font-size:32px;font-weight:bold;color:#f0c040;'>{r['animal-spirit']}</div>
             <div style='color:#c9a0ff;font-size:16px;margin-top:6px;'>{r['sub_type']}</div>
         </div>""", unsafe_allow_html=True)
         st.markdown(f"""<div class='advice-box'>
@@ -275,7 +275,7 @@ def _seimei():
     given = st.text_input("名前", key="m_sg", placeholder="太郎")
     given_strokes = st.number_input("名前の総画数", key="m_sg2", min_value=1, max_value=81, value=14)
     if st.button("✍️ 占う", key="m_btn_s"):
-        increment("seimei")
+        increment("name-reading")
         r = get_seimei_fortune(int(surname_strokes), int(given_strokes))
         luck_color = {"大吉":"#f0c040","最高運":"#ff6090","吉":"#9b6dff","小吉":"#60b0f0","努力運":"#a0a0a0"}
         overall_color = luck_color.get(r['overall'],"#a0a0a0")
@@ -340,7 +340,7 @@ def _shichuu():
     st.markdown("<div class='section-header'>🀄 四柱推命</div>", unsafe_allow_html=True)
     birth = st.date_input("生年月日", key="m_shb", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
     if st.button("🀄 占う", key="m_btn_sh"):
-        increment("shichuu")
+        increment("four-pillars")
         from logic import get_shichuu as _gs
         r = _gs(birth)
         st.markdown(f"""<div class='score-box'>
@@ -405,7 +405,7 @@ def _blood():
     if use_partner:
         partner = st.selectbox("相手の血液型", ["A","B","O","AB"], key="m_blp2")
     if st.button("🩸 占う", key="m_btn_bl"):
-        increment("blood")
+        increment("blood-type")
         r = get_blood_fortune(blood, partner)
         st.markdown(f"## {blood}型：{r['title']}")
         st.markdown(f"""<div class='advice-box'>
@@ -457,7 +457,7 @@ def _ekikyo():
     st.markdown("<div class='section-header'>☯ 易経</div>", unsafe_allow_html=True)
     question = st.text_input("問い（任意）", key="m_eq", placeholder="例：今の仕事を続けるべきか？")
     if st.button("☯ 卦を立てる", key="m_btn_e"):
-        increment("ekikyo")
+        increment("i-ching")
         import time as _t
         hex_r = draw_hexagram(seed=int(_t.time()*1000)%100000)
         if question:

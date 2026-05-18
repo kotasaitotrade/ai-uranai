@@ -5,23 +5,23 @@ import os
 import streamlit as st
 
 FORTUNE_KEYS = [
-    "compat", "zodiac", "numerology", "kyusei", "animal",
-    "seimei", "horoscope", "shichuu", "biorhythm", "blood", "tarot", "ekikyo",
+    "compatibility", "zodiac-sign", "numerology", "nine-star-ki", "animal-spirit",
+    "name-reading", "horoscope", "four-pillars", "biorhythm", "blood-type", "tarot", "i-ching",
 ]
 
 FORTUNE_LABELS = {
-    "compat":     "💫 相性占い",
-    "zodiac":     "⭐ 星座占い",
+    "compatibility":     "💫 相性占い",
+    "zodiac-sign":     "⭐ 星座占い",
     "numerology": "🔢 数秘術",
-    "kyusei":     "☯️ 九星気学",
-    "animal":     "🐾 動物占い",
-    "seimei":     "✍️ 姓名判断",
+    "nine-star-ki":     "☯️ 九星気学",
+    "animal-spirit":     "🐾 動物占い",
+    "name-reading":     "✍️ 姓名判断",
     "horoscope":  "🌌 ホロスコープ",
-    "shichuu":    "🀄 四柱推命",
+    "four-pillars":    "🀄 四柱推命",
     "biorhythm":  "📈 バイオリズム",
-    "blood":      "🩸 血液型",
+    "blood-type":      "🩸 血液型",
     "tarot":      "🃏 タロット",
-    "ekikyo":     "☯ 易経",
+    "i-ching":     "☯ 易経",
 }
 
 COUNTER_FILENAME = "uranai_view_counts.json"

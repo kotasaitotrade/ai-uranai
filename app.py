@@ -334,13 +334,13 @@ header[data-testid="stHeader"] { display: none; }
 # ===== 占いメタデータ =====
 FORTUNE_META = [
     {
-        "key": "compat", "icon": "💫", "title": "相性占い",
+        "key": "compatibility", "icon": "💫", "title": "相性占い",
         "subtitle": "2人の関係性を5軸で徹底分析",
         "desc": "生年月日から相性スコアをレーダーチャートで可視化。シンクロ・価値観・ノリ・ミライ・運命の5軸で診断します。",
         "tags": ["恋愛", "二人用"], "badge": "完全無料",
     },
     {
-        "key": "zodiac", "icon": "⭐", "title": "星座占い",
+        "key": "zodiac-sign", "icon": "⭐", "title": "星座占い",
         "subtitle": "今日の運勢を4つのエリアで鑑定",
         "desc": "恋愛・仕事・金運・健康の今日の運勢をスコアとアドバイスで。ラッキーカラー・ラッキーナンバーもわかります。",
         "tags": ["総合運", "一人用"], "badge": "完全無料",
@@ -352,19 +352,19 @@ FORTUNE_META = [
         "tags": ["性格", "一人用"], "badge": "完全無料",
     },
     {
-        "key": "kyusei", "icon": "☯️", "title": "九星気学",
+        "key": "nine-star-ki", "icon": "☯️", "title": "九星気学",
         "subtitle": "本命星・吉方位・今年の運勢",
         "desc": "東洋の伝統占術。あなたの本命星から性格・吉方位・今年の運気スコアまで総合的に鑑定します。",
         "tags": ["総合運", "一人用"], "badge": "完全無料",
     },
     {
-        "key": "animal", "icon": "🐾", "title": "動物占い",
+        "key": "animal-spirit", "icon": "🐾", "title": "動物占い",
         "subtitle": "12動物×5サブタイプ＝60種類の性格診断",
         "desc": "干支をベースにした性格診断。60種類の動物タイプのうちあなたはどれ？サブタイプで詳細な性格も判明。",
         "tags": ["性格", "一人用"], "badge": "完全無料",
     },
     {
-        "key": "seimei", "icon": "✍️", "title": "姓名判断",
+        "key": "name-reading", "icon": "✍️", "title": "姓名判断",
         "subtitle": "五格（天格・地格・人格・外格・総格）で鑑定",
         "desc": "苗字と名前の画数から天格・地格・人格・外格・総格の五格を算出。名前が持つ運命の力を読み解きます。",
         "tags": ["性格", "一人用"], "badge": "完全無料",
@@ -376,7 +376,7 @@ FORTUNE_META = [
         "tags": ["性格", "一人用"], "badge": "完全無料",
     },
     {
-        "key": "shichuu", "icon": "🀄", "title": "四柱推命",
+        "key": "four-pillars", "icon": "🀄", "title": "四柱推命",
         "subtitle": "年柱・月柱・日柱と五行バランスを解析",
         "desc": "東洋占術の王様。生年月日から三柱と五行バランスを算出し、本命五行と今年の運勢を鑑定します。",
         "tags": ["総合運", "一人用"], "badge": "完全無料",
@@ -388,7 +388,7 @@ FORTUNE_META = [
         "tags": ["健康", "一人用"], "badge": "完全無料",
     },
     {
-        "key": "blood", "icon": "🩸", "title": "血液型占い",
+        "key": "blood-type", "icon": "🩸", "title": "血液型占い",
         "subtitle": "性格診断＋2人の相性スコア",
         "desc": "血液型別の詳細な性格診断と相性スコア。強み・弱み・恋愛傾向・ラッキーカラーがわかります。",
         "tags": ["性格", "恋愛"], "badge": "完全無料",
@@ -400,7 +400,7 @@ FORTUNE_META = [
         "tags": ["恋愛", "一人用"], "badge": "完全無料",
     },
     {
-        "key": "ekikyo", "icon": "☯", "title": "易経",
+        "key": "i-ching", "icon": "☯", "title": "易経",
         "subtitle": "六十四卦・六爻・変爻で深く鑑定",
         "desc": "中国最古の占い。64卦すべてに対応し、六爻の変爻まで読み解きます。心の問いへの深い洞察を得られます。",
         "tags": ["人生", "一人用"], "badge": "完全無料",
@@ -500,7 +500,7 @@ if fortune_key:
         """, unsafe_allow_html=True)
 
         # ===== 各占いフォーム =====
-        if fortune_key == "compat":
+        if fortune_key == "compatibility":
             col1, col2 = st.columns(2)
             with col1:
                 st.markdown("**🌸 あなた**")
@@ -511,7 +511,7 @@ if fortune_key:
                 name2 = st.text_input("ニックネーム", key="c_name2", placeholder="たろう")
                 birth2 = st.date_input("生年月日", key="c_birth2", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,6,15))
             if st.button("💫 占う", key="btn_compat"):
-                increment("compat")
+                increment("compatibility")
                 n1, n2 = name1 or "あなた", name2 or "相手"
                 r = calc_compatibility(n1, birth1, n2, birth2)
                 st.markdown(f"## ✨ {n1} × {n2} の相性結果")
@@ -552,10 +552,10 @@ if fortune_key:
                     st.markdown(f"**{n2}**")
                     st.markdown(f"- 星座：{r['zodiac2']}\n- 数秘：{r['life_path2']}\n- 九星：{r['kyusei2']}\n- 干支：{r['junishi2']}\n- 五行：{r['gogyo2']}")
 
-        elif fortune_key == "zodiac":
+        elif fortune_key == "zodiac-sign":
             birth_z = st.date_input("生年月日", key="z_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,4,1))
             if st.button("⭐ 占う", key="btn_zodiac"):
-                increment("zodiac")
+                increment("zodiac-sign")
                 zodiac = get_zodiac(birth_z)
                 r = get_daily_fortune(zodiac, date.today())
                 st.markdown(f"## {zodiac}")
@@ -593,10 +593,10 @@ if fortune_key:
                     <div style="margin-top:8px;color:#6b7280;line-height:1.7;">{r['personal_year_meaning']}</div>
                 </div>""", unsafe_allow_html=True)
 
-        elif fortune_key == "kyusei":
+        elif fortune_key == "nine-star-ki":
             birth_k = st.date_input("生年月日", key="k_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
             if st.button("☯️ 占う", key="btn_kyusei"):
-                increment("kyusei")
+                increment("nine-star-ki")
                 r = get_kyusei_fortune(birth_k, date.today())
                 st.markdown(f"## 本命星：{r['star_name']}")
                 st.markdown(f"""<div class="result-card">五行：{r['element']}　キーワード：{r['keyword']}</div>""", unsafe_allow_html=True)
@@ -612,13 +612,13 @@ if fortune_key:
                     <div style="margin-top:8px;color:#6b7280;line-height:1.7;">{r['year_fortune']}</div>
                 </div>""", unsafe_allow_html=True)
 
-        elif fortune_key == "animal":
+        elif fortune_key == "animal-spirit":
             birth_a = st.date_input("生年月日", key="a_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
             if st.button("🐾 占う", key="btn_animal"):
-                increment("animal")
+                increment("animal-spirit")
                 r = get_animal_fortune(birth_a)
                 st.markdown(f"""<div class="score-box">
-                    <div style="font-size:40px;font-weight:700;color:#f0c040;">{r['animal']}</div>
+                    <div style="font-size:40px;font-weight:700;color:#f0c040;">{r['animal-spirit']}</div>
                     <div style="color:#6b7280;font-size:18px;margin-top:6px;">{r['sub_type']}</div>
                 </div>""", unsafe_allow_html=True)
                 st.markdown(f"""<div class="advice-box">
@@ -630,7 +630,7 @@ if fortune_key:
                     <div style="margin-top:8px;color:#6b7280;line-height:1.7;">{r['sub_personality']}</div>
                 </div>""", unsafe_allow_html=True)
 
-        elif fortune_key == "seimei":
+        elif fortune_key == "name-reading":
             col_s1, col_s2 = st.columns(2)
             with col_s1:
                 surname = st.text_input("苗字", key="s_surname", placeholder="山田")
@@ -640,7 +640,7 @@ if fortune_key:
                 given_strokes = st.number_input("名前の総画数", key="s_strokes2", min_value=1, max_value=81, value=14)
             st.caption("※ 画数は漢字辞典の旧字体画数を使用してください")
             if st.button("✍️ 占う", key="btn_seimei"):
-                increment("seimei")
+                increment("name-reading")
                 r = get_seimei_fortune(int(surname_strokes), int(given_strokes))
                 luck_color = {"大吉":"#f0c040","最高運":"#ff6090","吉":"#7c3aed","小吉":"#60b0f0","努力運":"#808080"}
                 oc = luck_color.get(r['overall'],"#808080")
@@ -720,10 +720,10 @@ if fortune_key:
                             <span style="color:{c};font-size:12px;margin-left:8px;">【{asp['type']}】</span>
                         </div>""", unsafe_allow_html=True)
 
-        elif fortune_key == "shichuu":
+        elif fortune_key == "four-pillars":
             sh_birth = st.date_input("生年月日", key="sh_birth", min_value=date(1920,1,1), max_value=date(2010,12,31), value=date(1990,1,1))
             if st.button("🀄 占う", key="btn_shichuu"):
-                increment("shichuu")
+                increment("four-pillars")
                 r = get_shichuu(sh_birth)
                 st.markdown(f"""<div class="score-box">
                     <div style="font-size:24px;color:#f0c040;">本命五行：{r['honmei_gogyo']}（{r['honmei_inyo']}）</div>
@@ -780,14 +780,14 @@ if fortune_key:
                     legend=dict(font=dict(color='#c0a0e0')),margin=dict(t=20,b=20,l=40,r=20),height=280)
                 st.plotly_chart(fig, use_container_width=True)
 
-        elif fortune_key == "blood":
+        elif fortune_key == "blood-type":
             bl_blood = st.selectbox("あなたの血液型", ["A","B","O","AB"], key="bl_blood")
             use_partner = st.checkbox("相手との相性も見る", key="bl_use_partner")
             bl_partner = None
             if use_partner:
                 bl_partner = st.selectbox("相手の血液型", ["A","B","O","AB"], key="bl_partner")
             if st.button("🩸 占う", key="btn_blood"):
-                increment("blood")
+                increment("blood-type")
                 r = get_blood_fortune(bl_blood, bl_partner)
                 st.markdown(f"## {bl_blood}型：{r['title']}")
                 st.markdown(f"""<div class="advice-box"><div style="color:#6b7280;line-height:1.7;">{r['desc']}</div></div>""", unsafe_allow_html=True)
@@ -827,10 +827,10 @@ if fortune_key:
                         <div style="margin-top:10px;color:#6b7280;line-height:1.7;">{meaning}</div>
                     </div>""", unsafe_allow_html=True)
 
-        elif fortune_key == "ekikyo":
+        elif fortune_key == "i-ching":
             eki_question = st.text_input("問い（任意）", key="eki_q", placeholder="例：今の仕事を続けるべきか？")
             if st.button("☯ 卦を立てる", key="btn_eki"):
-                increment("ekikyo")
+                increment("i-ching")
                 import time as _time
                 hex_r = draw_hexagram(seed=int(_time.time()*1000)%100000)
                 if eki_question:
@@ -933,7 +933,7 @@ if current_page == "today":
                     """, unsafe_allow_html=True)
                     if st.button("選ぶ", key=f"zod_{name}", use_container_width=True):
                         st.session_state.today_zodiac = name
-                        increment("zodiac")
+                        increment("zodiac-sign")
                         st.rerun()
     else:
         # 結果表示
@@ -1055,18 +1055,18 @@ filtered = FORTUNE_META if st.session_state.cat_filter == "すべて" else [
 main_col, side_col = st.columns([3, 1])
 
 CARD_GRADIENTS = {
-    "compat":    "linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%)",
-    "zodiac":    "linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%)",
+    "compatibility":    "linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%)",
+    "zodiac-sign":    "linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%)",
     "numerology":"linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%)",
-    "kyusei":    "linear-gradient(135deg,#fef3c7 0%,#fde68a 100%)",
-    "animal":    "linear-gradient(135deg,#dcfce7 0%,#bbf7d0 100%)",
-    "seimei":    "linear-gradient(135deg,#fef9c3 0%,#fef08a 100%)",
+    "nine-star-ki":    "linear-gradient(135deg,#fef3c7 0%,#fde68a 100%)",
+    "animal-spirit":    "linear-gradient(135deg,#dcfce7 0%,#bbf7d0 100%)",
+    "name-reading":    "linear-gradient(135deg,#fef9c3 0%,#fef08a 100%)",
     "horoscope": "linear-gradient(135deg,#ede9fe 0%,#c4b5fd 100%)",
-    "shichuu":   "linear-gradient(135deg,#fee2e2 0%,#fecaca 100%)",
+    "four-pillars":   "linear-gradient(135deg,#fee2e2 0%,#fecaca 100%)",
     "biorhythm": "linear-gradient(135deg,#cffafe 0%,#a5f3fc 100%)",
-    "blood":     "linear-gradient(135deg,#ffe4e6 0%,#fecdd3 100%)",
+    "blood-type":     "linear-gradient(135deg,#ffe4e6 0%,#fecdd3 100%)",
     "tarot":     "linear-gradient(135deg,#f3e8ff 0%,#e9d5ff 100%)",
-    "ekikyo":    "linear-gradient(135deg,#d1fae5 0%,#6ee7b7 100%)",
+    "i-ching":    "linear-gradient(135deg,#d1fae5 0%,#6ee7b7 100%)",
 }
 
 with main_col:
