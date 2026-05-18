@@ -142,7 +142,7 @@ def render_ranking():
     sorted_items = sorted(counts.items(), key=lambda x: x[1], reverse=True)
     total = sum(counts.values()) or 1
 
-    st.markdown("### 🏆 人気占いランキング")
+    st.markdown("### 🐨 人気占いランキング")
     medals = ["🥇", "🥈", "🥉"]
 
     for i, (key, count) in enumerate(sorted_items):
@@ -150,8 +150,8 @@ def render_ranking():
         medal = medals[i] if i < 3 else f"**{i+1}.**"
         pct = count / total * 100
         bar_w = max(int(pct), 1)
-        color = "#7c3aed" if i == 0 else "#a855f7" if i == 1 else "#f43f5e" if i == 2 else "#6b7280"
-        bg = "#f3f0ff" if i < 2 else "#fff1f2" if i == 2 else "#f9fafb"
+        color = "#5c4033" if i == 0 else "#7a5c4a" if i == 1 else "#8bc4a8" if i == 2 else "#7a6a5a"
+        bg = "#f0ebe5" if i < 2 else "#e8f4ef" if i == 2 else "#f5f5f0"
         st.markdown(f"""
 <div style='display:flex;align-items:center;gap:10px;margin:6px 0;background:{bg};border-radius:10px;padding:10px 12px;'>
   <div style='min-width:28px;font-size:18px;text-align:center;'>{medal}</div>

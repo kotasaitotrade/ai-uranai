@@ -43,113 +43,109 @@ if st.query_params.get("mobile") == "1":
 # ===== CSS =====
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
-
-/* ===== 若者向けモダンライトテーマ =====
-   BG:       #f8f7ff  (薄ラベンダーホワイト)
+/* ===== 天啓館 コアラテーマ =====
+   Concept: Koala × Modern Clean
+   BG:       #f5f5f0  (ナチュラルホワイト)
    Surface:  #ffffff  (カード)
-   Accent1:  #7c3aed  (バイオレット)
-   Accent2:  #f43f5e  (ローズ)
-   Accent3:  #06b6d4  (シアン)
-   Text1:    #1e1b2e  (ダーク)
-   Text2:    #6b7280  (グレー)
-   Border:   #e5e7eb  (ライトボーダー)
+   Primary:  #5c4033  (コアラブラウン)
+   Accent:   #8bc4a8  (ユーカリグリーン)
+   Soft:     #f0ebe5  (ライトブラウン)
+   Text1:    #2c2017  (ダークブラウン)
+   Text2:    #7a6a5a  (ミドルブラウン)
+   Border:   #e8e0d8  (ライトボーダー)
 */
 
-* { font-family: 'Noto Sans JP', sans-serif; box-sizing: border-box; }
+* {
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    box-sizing: border-box;
+}
 
 .stApp {
-    background: #f8f7ff;
-    color: #1e1b2e;
+    background: #f5f5f0;
+    color: #2c2017;
 }
 
 /* ヘッダー */
 .site-header {
     background: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 0 32px;
+    border-bottom: 2px solid #5c4033;
+    padding: 0 40px;
     display: flex;
     align-items: center;
-    gap: 40px;
-    height: 60px;
+    gap: 0;
+    height: 64px;
     position: sticky;
     top: 0;
     z-index: 100;
 }
 .site-logo {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 900;
-    background: linear-gradient(135deg, #7c3aed, #f43f5e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -0.3px;
+    color: #5c4033;
+    letter-spacing: 0.5px;
     white-space: nowrap;
+    margin-right: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-.header-nav { display: flex; gap: 2px; flex-wrap: wrap; }
+.site-logo .koala-icon { font-size: 24px; }
+.header-nav { display: flex; gap: 0; flex-wrap: wrap; height: 100%; align-items: stretch; }
 .nav-btn {
-    padding: 6px 14px;
-    border-radius: 8px;
+    padding: 0 18px;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     border: none;
     background: transparent;
-    color: #6b7280;
+    color: #7a6a5a;
     transition: all 0.15s;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
 }
-.nav-btn:hover { background: #f3f0ff; color: #7c3aed; }
-.nav-btn.active { background: #f3f0ff; color: #7c3aed; font-weight: 700; }
+.nav-btn:hover { color: #5c4033; border-bottom-color: #8bc4a8; }
+.nav-btn.active { color: #5c4033; font-weight: 700; border-bottom-color: #5c4033; }
 
 /* ヒーローバナー */
 .hero-banner {
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 40%, #f43f5e 100%);
-    padding: 32px 32px 28px;
+    background: linear-gradient(135deg, #5c4033 0%, #7a5c4a 50%, #8bc4a8 100%);
+    padding: 36px 40px 32px;
     color: white;
     position: relative;
     overflow: hidden;
 }
 .hero-banner::before {
-    content: '';
+    content: '🐨';
     position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 400px;
-    height: 400px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 50%;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 80px;
+    opacity: 0.25;
 }
-.hero-banner::after {
-    content: '';
-    position: absolute;
-    bottom: -30%;
-    right: 20%;
-    width: 200px;
-    height: 200px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 50%;
-}
-.hero-title { font-size: 24px; font-weight: 900; margin-bottom: 6px; line-height: 1.3; }
-.hero-sub { font-size: 14px; opacity: 0.85; }
+.hero-title { font-size: 26px; font-weight: 900; margin-bottom: 8px; line-height: 1.3; letter-spacing: 0.3px; }
+.hero-sub { font-size: 14px; opacity: 0.85; font-weight: 400; }
 
 /* カテゴリチップ */
 .cat-chip-row { display:flex; gap:8px; padding:16px 0 12px; flex-wrap:wrap; }
 .cat-chip {
-    padding: 7px 18px;
-    border-radius: 20px;
+    padding: 7px 20px;
+    border-radius: 28px;
     font-size: 13px;
     font-weight: 500;
     background: #ffffff;
-    border: 1.5px solid #e5e7eb;
-    color: #6b7280;
+    border: 1.5px solid #e8e0d8;
+    color: #7a6a5a;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.15s;
 }
 .cat-chipactive {
-    background: #7c3aed;
-    border-color: #7c3aed;
+    background: #5c4033;
+    border-color: #5c4033;
     color: white;
     font-weight: 700;
 }
@@ -157,53 +153,54 @@ st.markdown("""
 /* 占いカード */
 .fortune-card {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
+    border: 1px solid #e8e0d8;
+    border-radius: 12px;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
     height: 100%;
 }
 .fortune-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 16px 40px rgba(124,58,237,0.15);
-    border-color: #c4b5fd;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(92,64,51,0.12);
+    border-color: #c4a882;
 }
 .card-thumb {
-    height: 110px;
+    height: 120px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 50px;
+    font-size: 52px;
     position: relative;
+    background: #f5f5f0;
 }
 .card-badge {
     position: absolute;
     top: 10px;
     left: 10px;
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: #8bc4a8;
     color: white;
     font-size: 10px;
     font-weight: 700;
     padding: 3px 10px;
-    border-radius: 20px;
+    border-radius: 28px;
     letter-spacing: 0.3px;
 }
 .card-body { padding: 14px 16px 16px; }
 .card-meta { margin-bottom: 5px; }
 .card-title {
-    color: #1e1b2e;
+    color: #2c2017;
     font-size: 15px;
     font-weight: 700;
     line-height: 1.4;
     margin-bottom: 4px;
 }
-.card-desc { color: #9ca3af; font-size: 11px; line-height: 1.6; }
+.card-desc { color: #a09080; font-size: 11px; line-height: 1.6; }
 
 /* 占い詳細ページ */
 .detail-header {
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 60%, #f43f5e 100%);
-    border-radius: 16px;
+    background: linear-gradient(135deg, #5c4033 0%, #7a5c4a 60%, #8bc4a8 100%);
+    border-radius: 12px;
     padding: 28px 24px;
     margin-bottom: 20px;
     display: flex;
@@ -213,34 +210,34 @@ st.markdown("""
 }
 .detail-icon { font-size: 52px; }
 .detail-title { font-size: 22px; font-weight: 900; color: white; margin-bottom: 4px; }
-.detail-subtitle { color: rgba(255,255,255,0.8); font-size: 14px; }
+.detail-subtitle { color: rgba(255,255,255,0.85); font-size: 14px; }
 
 /* スコアボックス */
 .score-box {
-    background: linear-gradient(135deg, #fdf4ff 0%, #fce7f3 100%);
-    border: 1px solid #e9d5ff;
-    border-radius: 16px;
+    background: #f0ebe5;
+    border: 1px solid #e8e0d8;
+    border-radius: 12px;
     padding: 28px 24px;
     text-align: center;
     margin: 14px 0;
 }
-.score-num { font-size: 60px; font-weight: 900; background: linear-gradient(135deg,#7c3aed,#f43f5e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.score-num { font-size: 60px; font-weight: 900; color: #5c4033; }
 
 /* アドバイスボックス */
 .advice-box {
-    background: #fafafa;
-    border: 1px solid #f3f4f6;
-    border-left: 4px solid #7c3aed;
+    background: #fafaf8;
+    border: 1px solid #e8e0d8;
+    border-left: 4px solid #5c4033;
     padding: 14px 16px;
     margin: 8px 0;
-    border-radius: 0 12px 12px 0;
+    border-radius: 0 8px 8px 0;
 }
 
 /* 結果カード */
 .result-card {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
+    border: 1px solid #e8e0d8;
+    border-radius: 10px;
     padding: 16px;
     margin: 8px 0;
 }
@@ -248,29 +245,29 @@ st.markdown("""
 /* サイドバー */
 .sidebar-section {
     background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
+    border: 1px solid #e8e0d8;
+    border-radius: 12px;
     padding: 18px;
     margin-bottom: 16px;
 }
 .sidebar-title {
-    color: #1e1b2e;
+    color: #5c4033;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.8px;
     text-transform: uppercase;
     margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 2px solid #f3f0ff;
+    border-bottom: 2px solid #f0ebe5;
 }
 .sidebar-item {
-    color: #6b7280;
+    color: #7a6a5a;
     font-size: 13px;
     padding: 5px 0;
     cursor: pointer;
     transition: color 0.15s;
 }
-.sidebar-item:hover { color: #7c3aed; }
+.sidebar-item:hover { color: #5c4033; }
 
 /* Streamlit上書き */
 .block-container { padding: 0 !important; max-width: 100% !important; }
@@ -280,54 +277,54 @@ header[data-testid="stHeader"] { display: none; }
 
 /* メインボタン（占う実行） */
 .stButton > button {
-    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    background: #5c4033;
     color: white;
     border: none;
-    border-radius: 12px;
-    padding: 10px 24px;
+    border-radius: 28px;
+    padding: 12px 28px;
     font-size: 14px;
     font-weight: 700;
     width: 100%;
     transition: opacity 0.15s, transform 0.1s;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
 }
-.stButton > button:hover { opacity: 0.88; transform: translateY(-1px); }
+.stButton > button:hover { background: #7a5c4a; transform: translateY(-1px); }
 .stButton > button:active { transform: translateY(0); }
 
 /* secondaryボタン */
 [data-testid="stBaseButton-secondary"] > button {
     background: #ffffff !important;
-    border: 1.5px solid #e5e7eb !important;
-    color: #6b7280 !important;
+    border: 1.5px solid #e8e0d8 !important;
+    color: #7a6a5a !important;
     font-size: 13px !important;
     font-weight: 500 !important;
-    border-radius: 10px !important;
+    border-radius: 28px !important;
 }
 [data-testid="stBaseButton-secondary"] > button:hover {
-    border-color: #7c3aed !important;
-    color: #7c3aed !important;
-    background: #faf5ff !important;
+    border-color: #5c4033 !important;
+    color: #5c4033 !important;
+    background: #f0ebe5 !important;
 }
 
-.stTabs [data-baseweb="tab"] { color: #9ca3af; font-size: 13px; }
-.stTabs [aria-selected="true"] { color: #7c3aed; border-bottom-color: #7c3aed; }
+.stTabs [data-baseweb="tab"] { color: #a09080; font-size: 13px; }
+.stTabs [aria-selected="true"] { color: #5c4033; border-bottom-color: #5c4033; }
 [data-testid="stTextInput"] input, [data-testid="stNumberInput"] input {
     background: #ffffff !important;
-    border: 1.5px solid #e5e7eb !important;
-    color: #1e1b2e !important;
-    border-radius: 10px !important;
+    border: 1.5px solid #e8e0d8 !important;
+    color: #2c2017 !important;
+    border-radius: 8px !important;
 }
 [data-testid="stDateInput"] input {
     background: #ffffff !important;
-    border: 1.5px solid #e5e7eb !important;
-    color: #1e1b2e !important;
+    border: 1.5px solid #e8e0d8 !important;
+    color: #2c2017 !important;
 }
 [data-baseweb="select"] > div {
     background: #ffffff !important;
-    border: 1.5px solid #e5e7eb !important;
-    color: #1e1b2e !important;
+    border: 1.5px solid #e8e0d8 !important;
+    color: #2c2017 !important;
 }
-[data-testid="stSlider"] { accent-color: #7c3aed; }
+[data-testid="stSlider"] { accent-color: #5c4033; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -438,7 +435,7 @@ nav_html = "".join([
 ])
 st.markdown(f"""
 <div class="site-header">
-    <div class="site-logo">✨ <span>天啓館</span></div>
+    <div class="site-logo"><span class="koala-icon">🐨</span><span>天啓館</span></div>
     <div class="header-nav">{nav_html}</div>
 </div>
 """, unsafe_allow_html=True)
@@ -492,8 +489,8 @@ if fortune_key:
                 <div class="detail-title">{meta['title']}</div>
                 <div class="detail-subtitle">{meta['subtitle']}</div>
                 <div style="margin-top:8px;">
-                    {''.join(f'<span style="background:#f3f0ff;color:#7c3aed;font-size:11px;padding:2px 10px;border-radius:10px;margin-right:6px;">{t}</span>' for t in meta['tags'])}
-                    <span style="background:#d1fae5;color:#059669;font-size:11px;padding:2px 10px;border-radius:10px;">{meta['badge']}</span>
+                    {''.join(f'<span style="background:rgba(255,255,255,0.2);color:white;font-size:11px;padding:2px 10px;border-radius:28px;margin-right:6px;">{t}</span>' for t in meta['tags'])}
+                    <span style="background:#8bc4a8;color:white;font-size:11px;padding:2px 10px;border-radius:28px;">{meta['badge']}</span>
                 </div>
             </div>
         </div>
@@ -516,21 +513,21 @@ if fortune_key:
                 r = calc_compatibility(n1, birth1, n2, birth2)
                 st.markdown(f"## ✨ {n1} × {n2} の相性結果")
                 st.markdown(f"""<div class="score-box">
-                    <div style="color:#c9a0ff;">総合相性スコア</div>
+                    <div style="color:#7a6a5a;">総合相性スコア</div>
                     <div class="score-num">{r['total']}点</div>
-                    <div style="color:#6b7280;">{r['total_comment']}</div>
+                    <div style="color:#7a6a5a;">{r['total_comment']}</div>
                 </div>""", unsafe_allow_html=True)
                 axes = ["シンクロ","価値観","ノリ","ミライ","運命"]
                 scores = [r['synchro'],r['values'],r['vibe'],r['future'],r['fate']]
                 fig = go.Figure(data=go.Scatterpolar(
                     r=scores+[scores[0]], theta=axes+[axes[0]],
-                    fill='toself', fillcolor='rgba(160,80,255,0.25)',
-                    line=dict(color='#7c3aed',width=2), marker=dict(color='#f0c040',size=8)
+                    fill='toself', fillcolor='rgba(139,196,168,0.3)',
+                    line=dict(color='#5c4033',width=2), marker=dict(color='#d4a84b',size=8)
                 ))
                 fig.update_layout(
-                    polar=dict(bgcolor='rgba(20,10,40,0.9)',
-                        radialaxis=dict(visible=True,range=[0,100],tickfont=dict(color='#706090'),gridcolor='rgba(124,58,237,0.15)'),
-                        angularaxis=dict(tickfont=dict(color='#c0a0e0',size=13),gridcolor='rgba(124,58,237,0.15)')),
+                    polar=dict(bgcolor='rgba(245,245,240,0.9)',
+                        radialaxis=dict(visible=True,range=[0,100],tickfont=dict(color='#7a6a5a'),gridcolor='rgba(92,64,51,0.12)'),
+                        angularaxis=dict(tickfont=dict(color='#5c4033',size=13),gridcolor='rgba(92,64,51,0.12)')),
                     paper_bgcolor='rgba(0,0,0,0)', showlegend=False, margin=dict(t=40,b=40,l=60,r=60)
                 )
                 st.plotly_chart(fig, use_container_width=True)
@@ -538,7 +535,7 @@ if fortune_key:
                     ("💫 シンクロ","synchro",r['synchro']),("🧭 価値観","values",r['values']),
                     ("🎉 ノリ","vibe",r['vibe']),("🌱 ミライ","future",r['future']),("🔮 運命","fate",r['fate']),
                 ]:
-                    c = "#7c3aed" if score>=70 else "#f0c040" if score>=50 else "#e06060"
+                    c = "#5c4033" if score>=70 else "#d4a84b" if score>=50 else "#c06060"
                     st.markdown(f"""<div class="advice-box">
                         <span style="color:#6b7280;font-weight:700;">{title}</span>
                         <span style="float:right;color:{c};font-size:20px;font-weight:700;">{score}点</span>
@@ -560,18 +557,18 @@ if fortune_key:
                 r = get_daily_fortune(zodiac, date.today())
                 st.markdown(f"## {zodiac}")
                 st.markdown(f"""<div class="result-card">
-                    <span style="color:#6b7280;">属性：</span><b style="color:#e0d0ff;">{ZODIAC_ELEMENT[zodiac]}</b>
-                    <span style="color:#6b7280;">支配星：</span><b style="color:#e0d0ff;">{ZODIAC_RULING[zodiac]}</b>
-                    <span style="color:#6b7280;">キーワード：</span><b style="color:#e0d0ff;">{ZODIAC_KEYWORD[zodiac]}</b>
+                    <span style="color:#7a6a5a;">属性：</span><b style="color:#5c4033;">{ZODIAC_ELEMENT[zodiac]}</b>
+                    &nbsp;&nbsp;<span style="color:#7a6a5a;">支配星：</span><b style="color:#5c4033;">{ZODIAC_RULING[zodiac]}</b>
+                    &nbsp;&nbsp;<span style="color:#7a6a5a;">キーワード：</span><b style="color:#5c4033;">{ZODIAC_KEYWORD[zodiac]}</b>
                 </div>""", unsafe_allow_html=True)
                 st.markdown(f"""<div class="score-box">
-                    <div style="color:#6b7280;">総合運</div>
+                    <div style="color:#7a6a5a;">総合運</div>
                     <div class="score-num">{r['total']}点</div>
-                    <div style="color:#f0c040;">🍀 {r['lucky_color']}　🔢 {r['lucky_number']}</div>
+                    <div style="color:#d4a84b;">🍀 {r['lucky_color']}　🔢 {r['lucky_number']}</div>
                 </div>""", unsafe_allow_html=True)
                 for area, icon in [("恋愛","💕"),("仕事","💼"),("金運","💰"),("健康","💪")]:
                     s = r[area]['score']
-                    c = "#7c3aed" if s>=75 else "#f0c040" if s>=55 else "#e06060"
+                    c = "#5c4033" if s>=75 else "#d4a84b" if s>=55 else "#c06060"
                     stars = "★"*(s//20)+"☆"*(5-s//20)
                     st.markdown(f"""<div class="advice-box">
                         <span style="color:#6b7280;font-weight:700;">{icon} {area}</span>
@@ -585,12 +582,12 @@ if fortune_key:
                 increment("numerology")
                 r = get_numerology_full(birth_n)
                 st.markdown(f"""<div class="score-box">
-                    <div style="color:#f0c040;font-size:30px;font-weight:700;">{r['life_path']} — {r['name']}</div>
-                    <div style="color:#6b7280;margin-top:12px;line-height:1.7;">{r['personality']}</div>
+                    <div style="color:#5c4033;font-size:30px;font-weight:700;">{r['life_path']} — {r['name']}</div>
+                    <div style="color:#7a6a5a;margin-top:12px;line-height:1.7;">{r['personality']}</div>
                 </div>""", unsafe_allow_html=True)
                 st.markdown(f"""<div class="advice-box">
-                    <span style="color:#6b7280;font-weight:700;">{date.today().year}年 パーソナルイヤー：{r['personal_year']}</span>
-                    <div style="margin-top:8px;color:#6b7280;line-height:1.7;">{r['personal_year_meaning']}</div>
+                    <span style="color:#5c4033;font-weight:700;">{date.today().year}年 パーソナルイヤー：{r['personal_year']}</span>
+                    <div style="margin-top:8px;color:#7a6a5a;line-height:1.7;">{r['personal_year_meaning']}</div>
                 </div>""", unsafe_allow_html=True)
 
         elif fortune_key == "nine-star-ki":
@@ -601,15 +598,15 @@ if fortune_key:
                 st.markdown(f"## 本命星：{r['star_name']}")
                 st.markdown(f"""<div class="result-card">五行：{r['element']}　キーワード：{r['keyword']}</div>""", unsafe_allow_html=True)
                 st.markdown(f"""<div class="advice-box">
-                    <span style="color:#6b7280;font-weight:700;">性格・特徴</span>
-                    <div style="margin-top:8px;color:#6b7280;line-height:1.7;">{r['personality']}</div>
+                    <span style="color:#5c4033;font-weight:700;">性格・特徴</span>
+                    <div style="margin-top:8px;color:#7a6a5a;line-height:1.7;">{r['personality']}</div>
                 </div>""", unsafe_allow_html=True)
                 st.markdown(f"""<div class="score-box">
-                    <div style="color:#f0c040;font-size:22px;">🧭 吉方位：{r['lucky_direction']}</div>
+                    <div style="color:#d4a84b;font-size:22px;">🧭 吉方位：{r['lucky_direction']}</div>
                 </div>""", unsafe_allow_html=True)
                 st.markdown(f"""<div class="advice-box">
-                    <span style="color:#6b7280;font-weight:700;">{r['year']}年の運勢</span>
-                    <div style="margin-top:8px;color:#6b7280;line-height:1.7;">{r['year_fortune']}</div>
+                    <span style="color:#5c4033;font-weight:700;">{r['year']}年の運勢</span>
+                    <div style="margin-top:8px;color:#7a6a5a;line-height:1.7;">{r['year_fortune']}</div>
                 </div>""", unsafe_allow_html=True)
 
         elif fortune_key == "animal-spirit":
@@ -618,16 +615,16 @@ if fortune_key:
                 increment("animal-spirit")
                 r = get_animal_fortune(birth_a)
                 st.markdown(f"""<div class="score-box">
-                    <div style="font-size:40px;font-weight:700;color:#f0c040;">{r['animal-spirit']}</div>
-                    <div style="color:#6b7280;font-size:18px;margin-top:6px;">{r['sub_type']}</div>
+                    <div style="font-size:40px;font-weight:700;color:#5c4033;">{r['animal-spirit']}</div>
+                    <div style="color:#7a6a5a;font-size:18px;margin-top:6px;">{r['sub_type']}</div>
                 </div>""", unsafe_allow_html=True)
                 st.markdown(f"""<div class="advice-box">
-                    <span style="color:#6b7280;font-weight:700;">🐾 動物の特徴</span>
-                    <div style="margin-top:8px;color:#6b7280;line-height:1.7;">{r['personality']}</div>
+                    <span style="color:#5c4033;font-weight:700;">🐾 動物の特徴</span>
+                    <div style="margin-top:8px;color:#7a6a5a;line-height:1.7;">{r['personality']}</div>
                 </div>""", unsafe_allow_html=True)
                 st.markdown(f"""<div class="advice-box">
-                    <span style="color:#6b7280;font-weight:700;">🧠 {r['sub_type']}の特徴</span>
-                    <div style="margin-top:8px;color:#6b7280;line-height:1.7;">{r['sub_personality']}</div>
+                    <span style="color:#5c4033;font-weight:700;">🧠 {r['sub_type']}の特徴</span>
+                    <div style="margin-top:8px;color:#7a6a5a;line-height:1.7;">{r['sub_personality']}</div>
                 </div>""", unsafe_allow_html=True)
 
         elif fortune_key == "name-reading":
@@ -642,7 +639,7 @@ if fortune_key:
             if st.button("✍️ 占う", key="btn_seimei"):
                 increment("name-reading")
                 r = get_seimei_fortune(int(surname_strokes), int(given_strokes))
-                luck_color = {"大吉":"#f0c040","最高運":"#ff6090","吉":"#7c3aed","小吉":"#60b0f0","努力運":"#808080"}
+                luck_color = {"大吉":"#d4a84b","最高運":"#c06080","吉":"#5c4033","小吉":"#6090b0","努力運":"#808080"}
                 oc = luck_color.get(r['overall'],"#808080")
                 st.markdown(f"""<div class="score-box">
                     <div style="color:#6b7280;">{surname or ""} {given or ""}</div>
@@ -655,10 +652,10 @@ if fortune_key:
                 ]:
                     lc = luck_color.get(data['luck'],"#808080")
                     st.markdown(f"""<div class="advice-box">
-                        <span style="color:#6b7280;font-weight:700;">{label}（{data['value']}画）</span>
+                        <span style="color:#5c4033;font-weight:700;">{label}（{data['value']}画）</span>
                         <span style="float:right;color:{lc};font-weight:700;">{data['luck']}</span>
-                        <div style="clear:both;color:#6b7280;font-size:11px;">{desc}</div>
-                        <div style="margin-top:4px;color:#6b7280;">{data['desc']}</div>
+                        <div style="clear:both;color:#7a6a5a;font-size:11px;">{desc}</div>
+                        <div style="margin-top:4px;color:#7a6a5a;">{data['desc']}</div>
                     </div>""", unsafe_allow_html=True)
 
         elif fortune_key == "horoscope":
@@ -669,19 +666,19 @@ if fortune_key:
                 increment("horoscope")
                 r = get_horoscope(h_birth, h_hour, h_city)
                 st.markdown(f"""<div class="score-box">
-                    <div style="font-size:20px;color:#f0c040;">☉ {r['sun_sign']}　☽ {r['moon_sign']}　↑ {r['ascendant']['sign']}</div>
-                    <div style="color:#6b7280;margin-top:8px;">支配エレメント：{r['dominant_element']}　支配サイン：{r['dominant_sign']}</div>
+                    <div style="font-size:20px;color:#5c4033;">☉ {r['sun_sign']}　☽ {r['moon_sign']}　↑ {r['ascendant']['sign']}</div>
+                    <div style="color:#7a6a5a;margin-top:8px;">支配エレメント：{r['dominant_element']}　支配サイン：{r['dominant_sign']}</div>
                 </div>""", unsafe_allow_html=True)
                 planet_order = ["太陽","月","水星","金星","火星","木星","土星","天王星","海王星"]
-                planet_colors = {"太陽":"#f0c040","月":"#c8c8ff","水星":"#80c080","金星":"#ff90b0",
-                                 "火星":"#ff6060","木星":"#f0a030","土星":"#b0b060","天王星":"#60c0d0","海王星":"#6080ff"}
+                planet_colors = {"太陽":"#d4a84b","月":"#8b6a9a","水星":"#5c9a6a","金星":"#c06080",
+                                 "火星":"#c06060","木星":"#c4883a","土星":"#8a8a50","天王星":"#5a9aaa","海王星":"#5070c0"}
                 fig = go.Figure()
                 sign_syms = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"]
                 for i, sym in enumerate(sign_syms):
                     angle = math.radians(i*30+15)
-                    fig.add_annotation(x=math.cos(angle)*0.82,y=math.sin(angle)*0.82,text=sym,showarrow=False,font=dict(size=16,color="#8040c0"))
+                    fig.add_annotation(x=math.cos(angle)*0.82,y=math.sin(angle)*0.82,text=sym,showarrow=False,font=dict(size=16,color="#7a5c4a"))
                     a0 = math.radians(i*30)
-                    fig.add_shape(type="line",x0=math.cos(a0)*0.65,y0=math.sin(a0)*0.65,x1=math.cos(a0)*0.95,y1=math.sin(a0)*0.95,line=dict(color="#e5e7eb",width=1))
+                    fig.add_shape(type="line",x0=math.cos(a0)*0.65,y0=math.sin(a0)*0.65,x1=math.cos(a0)*0.95,y1=math.sin(a0)*0.95,line=dict(color="#e8e0d8",width=1))
                 sign_list = ["牡羊座","牡牛座","双子座","蟹座","獅子座","乙女座","天秤座","蠍座","射手座","山羊座","水瓶座","魚座"]
                 for planet in planet_order:
                     lon = r["planets"][planet]
@@ -693,30 +690,30 @@ if fortune_key:
                         name=f"{lon['planet_symbol']} {planet}（{lon['sign']}）",
                         hovertemplate=f"<b>{planet}</b><br>{lon['sign']} {lon['degree']}°<br>第{lon['house']}H<extra></extra>"))
                 theta_arr = [math.radians(i) for i in range(361)]
-                for rv, col in [(0.65,"#e5e7eb"),(0.95,"#e5e7eb")]:
+                for rv, col in [(0.65,"#e8e0d8"),(0.95,"#e8e0d8")]:
                     fig.add_trace(go.Scatter(x=[math.cos(t)*rv for t in theta_arr],y=[math.sin(t)*rv for t in theta_arr],
                         mode="lines",line=dict(color=col,width=1),showlegend=False,hoverinfo="skip"))
-                fig.update_layout(paper_bgcolor="rgba(255,255,255,0.98)",plot_bgcolor="rgba(255,255,255,0.98)",
+                fig.update_layout(paper_bgcolor="rgba(245,245,240,0.98)",plot_bgcolor="rgba(245,245,240,0.98)",
                     xaxis=dict(range=[-1.1,1.1],visible=False,scaleanchor="y"),yaxis=dict(range=[-1.1,1.1],visible=False),
-                    height=480,showlegend=True,legend=dict(font=dict(color="#c0a0e0",size=11),bgcolor="rgba(0,0,0,0)"),
+                    height=480,showlegend=True,legend=dict(font=dict(color="#7a6a5a",size=11),bgcolor="rgba(0,0,0,0)"),
                     margin=dict(t=20,b=20,l=20,r=20))
                 st.plotly_chart(fig, use_container_width=True)
                 for planet in planet_order:
                     p = r["planets"][planet]
                     st.markdown(f"""<div class="advice-box">
-                        <span style="color:#f0c040;font-weight:700;">{p['planet_symbol']} {planet}</span>
-                        <span style="color:#6b7280;margin-left:8px;">{p['sign']} {p['degree']}°</span>
-                        <span style="color:#6b7280;font-size:12px;margin-left:8px;">第{p['house']}H</span>
-                        <div style="margin-top:6px;color:#6b7280;">{p['sign_meaning']}</div>
+                        <span style="color:#5c4033;font-weight:700;">{p['planet_symbol']} {planet}</span>
+                        <span style="color:#7a6a5a;margin-left:8px;">{p['sign']} {p['degree']}°</span>
+                        <span style="color:#7a6a5a;font-size:12px;margin-left:8px;">第{p['house']}H</span>
+                        <div style="margin-top:6px;color:#7a6a5a;">{p['sign_meaning']}</div>
                     </div>""", unsafe_allow_html=True)
                 if r["aspects"]:
                     st.markdown("#### 🔗 主要アスペクト")
-                    ac = {"調和":"#7c3aed","緊張":"#e06060","強化":"#f0c040"}
+                    ac = {"調和":"#5c9a6a","緊張":"#c06060","強化":"#d4a84b"}
                     for asp in r["aspects"][:8]:
-                        c = ac.get(asp["type"],"#9080b0")
+                        c = ac.get(asp["type"],"#8b6a9a")
                         st.markdown(f"""<div class="result-card" style="padding:10px 16px;">
                             <span style="color:{c};font-weight:700;">{asp['p1']} × {asp['p2']}</span>
-                            <span style="color:#6b7280;margin-left:8px;">{asp['angle']}</span>
+                            <span style="color:#7a6a5a;margin-left:8px;">{asp['angle']}</span>
                             <span style="color:{c};font-size:12px;margin-left:8px;">【{asp['type']}】</span>
                         </div>""", unsafe_allow_html=True)
 
@@ -726,26 +723,26 @@ if fortune_key:
                 increment("four-pillars")
                 r = get_shichuu(sh_birth)
                 st.markdown(f"""<div class="score-box">
-                    <div style="font-size:24px;color:#f0c040;">本命五行：{r['honmei_gogyo']}（{r['honmei_inyo']}）</div>
-                    <div style="color:#6b7280;margin-top:8px;">{r['personality']}</div>
+                    <div style="font-size:24px;color:#5c4033;">本命五行：{r['honmei_gogyo']}（{r['honmei_inyo']}）</div>
+                    <div style="color:#7a6a5a;margin-top:8px;">{r['personality']}</div>
                 </div>""", unsafe_allow_html=True)
                 for label, val in [("年柱（生まれの運）",r['year_pillar']),("月柱（社会・仕事運）",r['month_pillar']),("日柱（本質・パートナー運）",r['day_pillar'])]:
                     st.markdown(f"""<div class="advice-box">
-                        <span style="color:#6b7280;font-weight:700;">{label}</span>
-                        <span style="float:right;color:#f0c040;font-size:24px;font-weight:700;">{val}</span>
+                        <span style="color:#5c4033;font-weight:700;">{label}</span>
+                        <span style="float:right;color:#d4a84b;font-size:24px;font-weight:700;">{val}</span>
                     </div>""", unsafe_allow_html=True)
-                elem_colors = {"木":"#60c060","火":"#e06060","土":"#c09040","金":"#c0c0c0","水":"#6090f0"}
+                elem_colors = {"木":"#5c9a6a","火":"#c06060","土":"#c09040","金":"#8a8a6a","水":"#5070c0"}
                 cols5 = st.columns(5)
                 for i, (elem, count) in enumerate(r['five_elements'].items()):
                     with cols5[i]:
-                        st.markdown(f"""<div style="text-align:center;padding:12px;background:#13131f;border:1px solid #2a2a42;border-radius:8px;">
+                        st.markdown(f"""<div style="text-align:center;padding:12px;background:#f0ebe5;border:1px solid #e8e0d8;border-radius:8px;">
                             <div style="color:{elem_colors[elem]};font-size:20px;font-weight:700;">{elem}</div>
-                            <div style="color:#f0c040;">{"●"*count + "○"*(3-count)}</div>
-                            <div style="color:#6b7280;font-size:12px;">{count}/3</div>
+                            <div style="color:#d4a84b;">{"●"*count + "○"*(3-count)}</div>
+                            <div style="color:#7a6a5a;font-size:12px;">{count}/3</div>
                         </div>""", unsafe_allow_html=True)
                 st.markdown(f"""<div class="advice-box" style="margin-top:12px;">
-                    <span style="color:#6b7280;">今年の年五行：<b style="color:#f0c040;">{r['year_gogyo']}</b></span>
-                    <div style="margin-top:8px;color:#6b7280;line-height:1.7;">{r['year_luck']}</div>
+                    <span style="color:#5c4033;">今年の年五行：<b style="color:#d4a84b;">{r['year_gogyo']}</b></span>
+                    <div style="margin-top:8px;color:#7a6a5a;line-height:1.7;">{r['year_luck']}</div>
                 </div>""", unsafe_allow_html=True)
 
         elif fortune_key == "biorhythm":
@@ -761,23 +758,23 @@ if fortune_key:
                 ]:
                     pct = int((val+1)/2*100)
                     st.markdown(f"""<div class="advice-box">
-                        <span style="color:#6b7280;font-weight:700;">{label}</span>
+                        <span style="color:#5c4033;font-weight:700;">{label}</span>
                         <span style="float:right;color:{color};font-weight:700;">{lbl}</span>
-                        <div style="background:#f3f4f6;border-radius:4px;height:10px;margin-top:10px;">
+                        <div style="background:#f0ebe5;border-radius:4px;height:10px;margin-top:10px;">
                             <div style="background:{color};width:{pct}%;height:10px;border-radius:4px;"></div>
                         </div>
                     </div>""", unsafe_allow_html=True)
                 hist = r['history']
                 dates_list = [h['date'].strftime('%m/%d') for h in hist]
                 fig = go.Figure()
-                for k, name, color in [('physical','身体','#a050ff'),('emotional','感情','#ff90b0'),('intellectual','知性','#60c0d0')]:
+                for k, name, color in [('physical','身体','#5c4033'),('emotional','感情','#c06080'),('intellectual','知性','#5a9aaa')]:
                     fig.add_trace(go.Scatter(x=dates_list,y=[h[k] for h in hist],name=name,line=dict(color=color,width=2),mode='lines'))
-                fig.add_hline(y=0,line_dash="dash",line_color="#e5e7eb")
-                fig.add_vline(x=dates_list[15],line_dash="dot",line_color="#f0c040",annotation_text="今日")
-                fig.update_layout(paper_bgcolor='rgba(0,0,0,0)',plot_bgcolor='rgba(13,13,24,0.8)',
-                    xaxis=dict(tickfont=dict(color='#706090'),gridcolor='rgba(60,40,120,0.2)'),
-                    yaxis=dict(tickfont=dict(color='#706090'),range=[-1.1,1.1],gridcolor='rgba(60,40,120,0.2)'),
-                    legend=dict(font=dict(color='#c0a0e0')),margin=dict(t=20,b=20,l=40,r=20),height=280)
+                fig.add_hline(y=0,line_dash="dash",line_color="#e8e0d8")
+                fig.add_vline(x=dates_list[15],line_dash="dot",line_color="#d4a84b",annotation_text="今日")
+                fig.update_layout(paper_bgcolor='rgba(245,245,240,0.98)',plot_bgcolor='rgba(240,235,229,0.8)',
+                    xaxis=dict(tickfont=dict(color='#7a6a5a'),gridcolor='rgba(92,64,51,0.12)'),
+                    yaxis=dict(tickfont=dict(color='#7a6a5a'),range=[-1.1,1.1],gridcolor='rgba(92,64,51,0.12)'),
+                    legend=dict(font=dict(color='#5c4033')),margin=dict(t=20,b=20,l=40,r=20),height=280)
                 st.plotly_chart(fig, use_container_width=True)
 
         elif fortune_key == "blood-type":
@@ -798,11 +795,11 @@ if fortune_key:
                     </div>""", unsafe_allow_html=True)
                 if bl_partner and 'compat_score' in r:
                     sc = r['compat_score']
-                    bc = "#7c3aed" if sc>=75 else "#f0c040" if sc>=55 else "#e06060"
+                    bc = "#5c4033" if sc>=75 else "#d4a84b" if sc>=55 else "#c06060"
                     st.markdown(f"""<div class="score-box">
-                        <div style="color:#6b7280;">{bl_blood}型 × {bl_partner}型 の相性</div>
-                        <div class="score-num" style="color:{bc};">{sc}点</div>
-                        <div style="color:#6b7280;margin-top:8px;">{r['compat_desc']}</div>
+                        <div style="color:#7a6a5a;">{bl_blood}型 × {bl_partner}型 の相性</div>
+                        <div class="score-num">{sc}点</div>
+                        <div style="color:#7a6a5a;margin-top:8px;">{r['compat_desc']}</div>
                     </div>""", unsafe_allow_html=True)
 
         elif fortune_key == "tarot":
@@ -813,18 +810,18 @@ if fortune_key:
                 import time as _time
                 cards = draw_tarot(num_cards, seed=int(_time.time()*1000)%100000)
                 for card, pos in zip(cards, SPREAD_POSITIONS[num_cards]):
-                    dc = "#e06060" if card['is_reversed'] else "#a050ff"
+                    dc = "#c06060" if card['is_reversed'] else "#8b6a9a"
                     meaning = card['reversed'] if card['is_reversed'] else card['upright']
                     st.markdown(f"""<div class="result-card" style="margin:12px 0;">
                         <div style="display:flex;align-items:center;gap:12px;">
                             <div style="font-size:38px;">{card['symbol']}</div>
                             <div>
-                                <div style="color:#6b7280;font-size:12px;">{pos}</div>
-                                <div style="color:#f0c040;font-size:18px;font-weight:700;">{card['num']}. {card['name']}</div>
+                                <div style="color:#7a6a5a;font-size:12px;">{pos}</div>
+                                <div style="color:#5c4033;font-size:18px;font-weight:700;">{card['num']}. {card['name']}</div>
                                 <div style="color:{dc};font-size:13px;">{"逆位置 🔄" if card['is_reversed'] else "正位置 ✨"}</div>
                             </div>
                         </div>
-                        <div style="margin-top:10px;color:#6b7280;line-height:1.7;">{meaning}</div>
+                        <div style="margin-top:10px;color:#7a6a5a;line-height:1.7;">{meaning}</div>
                     </div>""", unsafe_allow_html=True)
 
         elif fortune_key == "i-ching":
@@ -834,16 +831,16 @@ if fortune_key:
                 import time as _time
                 hex_r = draw_hexagram(seed=int(_time.time()*1000)%100000)
                 if eki_question:
-                    st.markdown(f"<p style='color:#6b7280;'>問い：{eki_question}</p>", unsafe_allow_html=True)
+                    st.markdown(f"<p style='color:#7a6a5a;'>問い：{eki_question}</p>", unsafe_allow_html=True)
                 st.markdown(f"""<div class="score-box">
-                    <div style="font-size:28px;font-weight:700;color:#f0c040;">第{hex_r['number']}卦 {hex_r['kanji']} — {hex_r['theme']}</div>
-                    <div style="color:#6b7280;margin-top:12px;line-height:1.8;">{hex_r['message']}</div>
+                    <div style="font-size:28px;font-weight:700;color:#5c4033;">第{hex_r['number']}卦 {hex_r['kanji']} — {hex_r['theme']}</div>
+                    <div style="color:#7a6a5a;margin-top:12px;line-height:1.8;">{hex_r['message']}</div>
                 </div>""", unsafe_allow_html=True)
                 line_cols = st.columns(6)
                 for i, (line_val, col) in enumerate(zip(reversed(hex_r['lines']), line_cols)):
                     is_changing = (6-i) in hex_r['changing_lines']
-                    color = "#f0c040" if is_changing else "#c0a0e0"
-                    col.markdown(f"""<div style="text-align:center;padding:8px;background:#13131f;border:1px solid #2a2a42;border-radius:6px;">
+                    color = "#d4a84b" if is_changing else "#8b6a9a"
+                    col.markdown(f"""<div style="text-align:center;padding:8px;background:#f0ebe5;border:1px solid #e8e0d8;border-radius:6px;">
                         <div style="color:{color};font-size:18px;">{"━━━" if line_val=="陽" else "━ ━"}</div>
                         <div style="color:{color};font-size:11px;">{line_val}{"◉" if is_changing else ""}</div>
                     </div>""", unsafe_allow_html=True)
@@ -906,14 +903,6 @@ if current_page == "today":
 
     # 星座グリッド（4列×3行）
     if not selected:
-        st.markdown("""
-        <style>
-        div[data-testid="stColumns"] > div > div > div > button.zodiac-btn {
-            background: #13131f; border: 1px solid #2a2a42;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
         rows = [ZODIAC_LIST[i:i+4] for i in range(0, 12, 4)]
         for row in rows:
             cols = st.columns(4)
@@ -922,13 +911,18 @@ if current_page == "today":
                 with cols[j]:
                     st.markdown(f"""
                     <div style="
-                        background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;
-                        padding:16px 8px;text-align:center;margin-bottom:4px;cursor:pointer;
-                        transition:border-color 0.15s;
+                        background:#ffffff;border:2px solid #e8e0d8;border-radius:12px;
+                        padding:20px 8px 12px;text-align:center;margin-bottom:4px;
+                        transition:border-color 0.15s,box-shadow 0.15s;
                     ">
-                        <div style="font-size:32px;color:{color};">{sym}</div>
-                        <div style="font-size:14px;font-weight:700;color:#1e1b2e;margin-top:6px;">{name}</div>
-                        <div style="font-size:11px;color:#6b7280;margin-top:2px;">{period}</div>
+                        <div style="
+                            width:64px;height:64px;border-radius:50%;
+                            background:{color}20;
+                            display:flex;align-items:center;justify-content:center;
+                            margin:0 auto 10px;font-size:28px;
+                        ">{sym}</div>
+                        <div style="font-size:14px;font-weight:700;color:#2c2017;">{name}</div>
+                        <div style="font-size:11px;color:#7a6a5a;margin-top:2px;">{period}</div>
                     </div>
                     """, unsafe_allow_html=True)
                     if st.button("選ぶ", key=f"zod_{name}", use_container_width=True):
@@ -937,7 +931,7 @@ if current_page == "today":
                         st.rerun()
     else:
         # 結果表示
-        color = ZODIAC_COLORS.get(selected, "#6c63ff")
+        color = ZODIAC_COLORS.get(selected, "#5c4033")
         sym = next(s for s, n, _ in ZODIAC_LIST if n == selected)
         r = get_daily_fortune(selected, date.today())
 
@@ -945,13 +939,18 @@ if current_page == "today":
         stars = lambda s: "★" * (s // 20) + "☆" * (5 - s // 20)
         total_stars = stars(r["total"])
         st.markdown(f"""
-        <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:28px 24px;margin-bottom:20px;">
+        <div style="background:#ffffff;border:1px solid #e8e0d8;border-radius:12px;padding:28px 24px;margin-bottom:20px;">
             <div style="display:flex;align-items:center;gap:20px;">
-                <div style="font-size:64px;color:{color};">{sym}</div>
+                <div style="
+                    width:80px;height:80px;border-radius:50%;
+                    background:{color}18;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:44px;flex-shrink:0;
+                ">{sym}</div>
                 <div>
-                    <div style="font-size:24px;font-weight:700;color:#1e1b2e;">{selected}</div>
-                    <div style="font-size:28px;color:#f0c040;letter-spacing:3px;margin-top:4px;">{total_stars}</div>
-                    <div style="font-size:13px;color:#6b7280;margin-top:4px;">総合運 {r['total']}点　🍀 {r['lucky_color']}　🔢 {r['lucky_number']}</div>
+                    <div style="font-size:24px;font-weight:700;color:#2c2017;">{selected}</div>
+                    <div style="font-size:26px;color:#d4a84b;letter-spacing:3px;margin-top:4px;">{total_stars}</div>
+                    <div style="font-size:13px;color:#7a6a5a;margin-top:4px;">総合運 {r['total']}点　🍀 {r['lucky_color']}　🔢 {r['lucky_number']}</div>
                 </div>
             </div>
         </div>
@@ -961,14 +960,14 @@ if current_page == "today":
         area_cols = st.columns(4)
         for i, (area, icon) in enumerate([("恋愛","💕"),("仕事","💼"),("金運","💰"),("健康","💪")]):
             s = r[area]["score"]
-            c = "#6c63ff" if s >= 75 else "#f0c040" if s >= 55 else "#e06060"
+            c = "#5c4033" if s >= 75 else "#d4a84b" if s >= 55 else "#c06060"
             with area_cols[i]:
                 st.markdown(f"""
-                <div style="background:#13131f;border:1px solid #2a2a42;border-radius:10px;padding:16px;text-align:center;">
+                <div style="background:#f0ebe5;border:1px solid #e8e0d8;border-radius:10px;padding:16px;text-align:center;">
                     <div style="font-size:22px;">{icon}</div>
-                    <div style="font-size:12px;color:#6b7280;margin-top:4px;">{area}</div>
+                    <div style="font-size:12px;color:#7a6a5a;margin-top:4px;">{area}</div>
                     <div style="font-size:20px;font-weight:700;color:{c};margin-top:6px;">{s}点</div>
-                    <div style="font-size:20px;color:{c};letter-spacing:2px;">{"★"*(s//20)}{"☆"*(5-s//20)}</div>
+                    <div style="font-size:18px;color:{c};letter-spacing:2px;">{"★"*(s//20)}{"☆"*(5-s//20)}</div>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -977,14 +976,14 @@ if current_page == "today":
         # アドバイス詳細
         for area, icon in [("恋愛","💕"),("仕事","💼"),("金運","💰"),("健康","💪")]:
             s = r[area]["score"]
-            c = "#6c63ff" if s >= 75 else "#f0c040" if s >= 55 else "#e06060"
+            c = "#5c4033" if s >= 75 else "#d4a84b" if s >= 55 else "#c06060"
             st.markdown(f"""
             <div class="advice-box" style="margin-bottom:8px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <span style="color:#1e1b2e;font-weight:700;">{icon} {area}</span>
+                    <span style="color:#2c2017;font-weight:700;">{icon} {area}</span>
                     <span style="color:{c};font-size:16px;letter-spacing:2px;">{"★"*(s//20)}{"☆"*(5-s//20)} <span style="font-size:13px;">{s}点</span></span>
                 </div>
-                <div style="margin-top:8px;color:#6b7280;line-height:1.7;">{r[area]['advice']}</div>
+                <div style="margin-top:8px;color:#7a6a5a;line-height:1.7;">{r[area]['advice']}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -1023,12 +1022,12 @@ st.markdown(f"""
 <style>
 .cat-chip-row {{ display:flex; gap:8px; padding:14px 0 10px; flex-wrap:wrap; }}
 .cat-chip {{
-    padding:6px 18px; border-radius:20px; font-size:13px; font-weight:500;
-    background:#1c1c2e; border:1px solid #2a2a42; color:#6b7280;
+    padding:6px 20px; border-radius:28px; font-size:13px; font-weight:500;
+    background:#ffffff; border:1.5px solid #e8e0d8; color:#7a6a5a;
     cursor:pointer; white-space:nowrap;
 }}
 .cat-chipactive {{
-    background:#6c63ff; border-color:#6c63ff; color:white;
+    background:#5c4033; border-color:#5c4033; color:white; font-weight:700;
 }}
 </style>
 """, unsafe_allow_html=True)
@@ -1055,18 +1054,18 @@ filtered = FORTUNE_META if st.session_state.cat_filter == "すべて" else [
 main_col, side_col = st.columns([3, 1])
 
 CARD_GRADIENTS = {
-    "compatibility":    "linear-gradient(135deg,#ede9fe 0%,#ddd6fe 100%)",
-    "zodiac-sign":    "linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%)",
-    "numerology":"linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%)",
-    "nine-star-ki":    "linear-gradient(135deg,#fef3c7 0%,#fde68a 100%)",
-    "animal-spirit":    "linear-gradient(135deg,#dcfce7 0%,#bbf7d0 100%)",
-    "name-reading":    "linear-gradient(135deg,#fef9c3 0%,#fef08a 100%)",
-    "horoscope": "linear-gradient(135deg,#ede9fe 0%,#c4b5fd 100%)",
-    "four-pillars":   "linear-gradient(135deg,#fee2e2 0%,#fecaca 100%)",
-    "biorhythm": "linear-gradient(135deg,#cffafe 0%,#a5f3fc 100%)",
-    "blood-type":     "linear-gradient(135deg,#ffe4e6 0%,#fecdd3 100%)",
-    "tarot":     "linear-gradient(135deg,#f3e8ff 0%,#e9d5ff 100%)",
-    "i-ching":    "linear-gradient(135deg,#d1fae5 0%,#6ee7b7 100%)",
+    "compatibility":    "linear-gradient(135deg,#f5ede8 0%,#ead5c8 100%)",
+    "zodiac-sign":    "linear-gradient(135deg,#e8f0ed 0%,#c8ddd4 100%)",
+    "numerology":"linear-gradient(135deg,#f0ebe5 0%,#e0d4c8 100%)",
+    "nine-star-ki":    "linear-gradient(135deg,#f5f0e8 0%,#e8dcca 100%)",
+    "animal-spirit":    "linear-gradient(135deg,#edf5f0 0%,#cce4d8 100%)",
+    "name-reading":    "linear-gradient(135deg,#f5f2e8 0%,#e8e0c8 100%)",
+    "horoscope": "linear-gradient(135deg,#ece8f5 0%,#d4cce8 100%)",
+    "four-pillars":   "linear-gradient(135deg,#f5e8e8 0%,#e8cccc 100%)",
+    "biorhythm": "linear-gradient(135deg,#e8f5f2 0%,#c8e8e0 100%)",
+    "blood-type":     "linear-gradient(135deg,#f5e8ed 0%,#e8ccd4 100%)",
+    "tarot":     "linear-gradient(135deg,#f0e8f5 0%,#dcc8e8 100%)",
+    "i-ching":    "linear-gradient(135deg,#e8f5e8 0%,#c8e4c8 100%)",
 }
 
 with main_col:
@@ -1079,10 +1078,10 @@ with main_col:
             with cols[j]:
                 view_count = counts.get(meta['key'], 0)
                 tags_html = "".join(
-                    f'<span style="background:#1c1c2e;color:#6b7280;font-size:10px;padding:2px 8px;border-radius:4px;margin-right:4px;">{t}</span>'
+                    f'<span style="background:#f0ebe5;color:#7a6a5a;font-size:10px;padding:2px 8px;border-radius:4px;margin-right:4px;">{t}</span>'
                     for t in meta['tags']
                 )
-                grad = CARD_GRADIENTS.get(meta['key'], "linear-gradient(135deg,#1c1c2e,#2a2a42)")
+                grad = CARD_GRADIENTS.get(meta['key'], "linear-gradient(135deg,#f0ebe5,#e8e0d8)")
                 st.markdown(f"""
                 <div class="fortune-card">
                     <div class="card-thumb" style="background:{grad};">
@@ -1093,7 +1092,7 @@ with main_col:
                         <div class="card-meta">{tags_html}</div>
                         <div class="card-title">{meta['title']}</div>
                         <div class="card-subtitle" style="color:#6b7280;font-size:11px;margin-bottom:6px;">{meta['subtitle']}</div>
-                        <div style="color:#9ca3af;font-size:11px;">👁 {view_count:,}回</div>
+                        <div style="color:#a09080;font-size:11px;">👁 {view_count:,}回</div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
